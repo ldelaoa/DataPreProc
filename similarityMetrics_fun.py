@@ -13,7 +13,6 @@ def similarMetrics_axial(img1,img2,itv):
     mutual_avg = mutual_info/count
     ssim_avg = ssim/count
     cross_avg = cross_corr/count
-    print(count,"slices analized")
     return mutual_avg,ssim_avg,cross_avg
 
 def similarMetrics_coronal(img1,img2,itv):
@@ -27,7 +26,6 @@ def similarMetrics_coronal(img1,img2,itv):
     mutual_avg = mutual_info/count
     ssim_avg = ssim/count
     cross_avg = cross_corr/count
-    print(count,"slices analized")
     return mutual_avg,ssim_avg,cross_avg
 
 def similarMetrics_sagital(img1,img2,itv):
@@ -41,5 +39,4 @@ def similarMetrics_sagital(img1,img2,itv):
     mutual_avg = mutual_info/count
     ssim_avg = ssim/count
     cross_avg = cross_corr/count
-    print(count,"slices analized")
     return mutual_avg,ssim_avg,cross_avg
