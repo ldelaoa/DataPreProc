@@ -2,6 +2,7 @@ from LookFiles import *
 from DataPreProc import *
 from SinglePxRegist import *
 import csv
+from RegistwStats import *
 
 
 def saveMetrics(PxList,MetricsList,savePath):
@@ -28,7 +29,8 @@ def main(root_path):
             print(Px, "ACCT")
             DataPreProc(acct_Path, acct_PathLM, PET_Path, os.path.join(root_path, Px), "ACCT")
             #Regist
-            regist_metrics.append(SinglePxRegist(os.path.join(root_path, Px),"CTRegistration"))
+            SinglePxRegist(os.path.join(root_path, Px),"CTRegistration")
+            regist_metrics.append(SingPxRegistWMetrics_onlyCTRegist(root_path,Px))
             CheckImages(root_path, Px)
 
     _ = saveMetrics(analizedPx,regist_metrics,root_path)

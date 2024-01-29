@@ -8,7 +8,7 @@ def similarMetrics_axial(img1,img2,itv):
         if np.sum(itv[:,:,i])>0:
             ssim = ssim+ metrics.structural_similarity(img1[:,:,i], img2[:,:,i],data_range=img2[:,:,i].max() - img2[:,:,i].min())
             mutual_info =mutual_info+ metrics.normalized_mutual_information(img1[:,:,i], img2[:,:,i],bins=100)
-            cross_corr =cross_corr+ np.max(correlate2d(img1[:,:,i], img2[:,:,i], mode='same'))
+            cross_corr =cross_corr+ np.mean(correlate2d(img1[:,:,i], img2[:,:,i], mode='same'))
             count += 1
     mutual_avg = mutual_info/count
     ssim_avg = ssim/count
@@ -21,7 +21,7 @@ def similarMetrics_coronal(img1,img2,itv):
         if np.sum(itv[:,i,:])>0:
             ssim = ssim+ metrics.structural_similarity(img1[:,i,:], img2[:,i,:],data_range=img2[:,i,:].max() - img2[:,i,:].min())
             mutual_info =mutual_info+ metrics.normalized_mutual_information(img1[:,i,:], img2[:,i,:],bins=100)
-            cross_corr =cross_corr+ np.max(correlate2d(img1[:,i,:], img2[:,i,:], mode='same'))
+            cross_corr =cross_corr+ np.mean(correlate2d(img1[:,i,:], img2[:,i,:], mode='same'))
             count += 1
     mutual_avg = mutual_info/count
     ssim_avg = ssim/count
@@ -34,7 +34,7 @@ def similarMetrics_sagital(img1,img2,itv):
         if np.sum(itv[i,:,:])>0:
             ssim = ssim+ metrics.structural_similarity(img1[i,:,:], img2[i,:,:],data_range=img2[i,:,:].max() - img2[i,:,:].min())
             mutual_info = mutual_info+ metrics.normalized_mutual_information(img1[i,:,:], img2[i,:,:],bins=100)
-            cross_corr =cross_corr+ np.max(correlate2d(img1[i,:,:], img2[i,:,:], mode='same'))
+            cross_corr =cross_corr+ np.mean(correlate2d(img1[i,:,:], img2[i,:,:], mode='same'))
             count += 1
     mutual_avg = mutual_info/count
     ssim_avg = ssim/count
