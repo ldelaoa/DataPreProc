@@ -1,6 +1,7 @@
 import SimpleITK as sitk
 import numpy as np
 import os
+from monai.transforms import CropForegroundd,Compose
 
 
 def RegionXtra(min_indices,max_indices,image,array):
@@ -33,6 +34,35 @@ def CropWithRegion(region,array,sitkImage):
     cropped_img.SetDirection(sitkImage.GetDirection())
 
     return cropped_img
+
+
+
+
+
+
+def CropForegroundFunctionMONAI(ctImage,lungImage,tumorImage1=None):
+    ctImage = np.expand_dims(ctImage,axis=0)
+    lungImage = np.expand_dims(lungImage,axis=0)
+    #Expand Dims    
+    if not(tumorImage1 is None):
+        tumorImage1 = np.expand_dims(tumorImage1,axis=0)
+        data_dict = {'CT': ctImage, 'Lung': lungImage, 'Tumor1':tumorImage1}
+    else:
+        data_dict = {'CT': ctImage, 'Lung': lungImage}
+    #Do the Transform
+    transform = Compose([CropForegroundd(keys=data_dict, source_key='Lung',k_divisible=256,margin=40)])
+    data = transform(data_dict)
+    ctnp = data['CT'][0].numpy()
+    lungnp = data['Lung'][0].numpy()
+    
+    if not(tumorImage1 is None):
+        tumor1np = data['Tumor1'][0].numpy()
+        return ctnp.astype(np.float64),lungnp.astype(np.uint8),tumor1np.astype(np.uint8)
+    else:
+        return ctnp.astype(np.float64),lungnp.astype(np.uint8),None
+
+
+
 
 
 def CropImgToLungMask(LungMask,CT,AddImg,rootPx_path,name):
