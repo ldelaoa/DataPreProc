@@ -29,7 +29,6 @@ def main(root_path):
             print(Px, "ACCT")
             DataPreProc(acct_Path, acct_PathLM, PET_Path, os.path.join(root_path, Px), "ACCT")
             #Regist
-            SinglePxRegist(os.path.join(root_path, Px),"CTRegistration")
             regist_metrics.append(SingPxRegistWMetrics_onlyCTRegist(root_path,Px))
             CheckImages(root_path, Px)
 
@@ -38,6 +37,7 @@ def main(root_path):
 
 if __name__ == "__main__" :
     rootPath = "/scratch/p308104/CT_RT_PET_ACCT_NiiToHabrok"
+    rootPath = "//zkh/appdata/RTDicom/Projectline_modelling_lung_cancer/Users/Luis/CT_RT_PET_ACCT_NiiToHabrok"
     #rootPath = "/home/umcg/Desktop/DataPreProces/CT_RT_PET_ACCT_NiiToHabrok"
     main(rootPath)
 

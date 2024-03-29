@@ -54,9 +54,9 @@ def SingPxRegistWMetrics_onlyCTRegist(root_path,Px):
     mutual_avg_co,ssim_avg_co,cross_avg_co = similarMetrics_coronal(img1_np,img2_np,itv_np)
     mutual_avg_sa,ssim_avg_sa,cross_avg_sa = similarMetrics_sagital(img1_np,img2_np,itv_np)
     
-    mutual_avg = np.mean(mutual_avg_ax,mutual_avg_co,mutual_avg_sa)
-    ssim_avg = np.mean(ssim_avg_ax,ssim_avg_co,ssim_avg_sa)
-    cross_avg - np.mean(cross_avg_ax,cross_avg_co,cross_avg_sa)
+    mutual_avg = (mutual_avg_ax+mutual_avg_co+mutual_avg_sa)/3
+    ssim_avg = (ssim_avg_ax+ssim_avg_co+ssim_avg_sa)/3
+    cross_avg = (cross_avg_ax+cross_avg_co+cross_avg_sa)/3
     
     print("CTCT Sagital {:.2f}, {:.2f}, {:.2f}".format(mutual_avg, ssim_avg, cross_avg))
     

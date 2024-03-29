@@ -32,41 +32,67 @@ def CheckImages(rootPath,Px):
     planctITV_array = sitk.GetArrayFromImage(planctITV_img)
 
     #Registered
-    PETRegist_img = sitk.ReadImage(os.path.join(rootPath, Px, "PET_registered4.nii.gz"))
+    PETRegist_img = sitk.ReadImage(os.path.join(rootPath, Px, "PET_IMGregistered4.nii.gz"))
     PETRegist_array = sitk.GetArrayFromImage(PETRegist_img)
 
-    ACCTLMRegist_img = sitk.ReadImage(os.path.join(rootPath, Px, "LungMask_registered4.nii.gz"))
+    ACCTLMRegist_img = sitk.ReadImage(os.path.join(rootPath, Px, "ACCT_IMGregistered4.nii.gz"))
     ACCTLMRegistLM_array = sitk.GetArrayFromImage(ACCTLMRegist_img)
 
     print("Px Check Images",Px)
     print("Sizes ACCT",acctLM_array.shape,acct_array.shape,acctPET_array.shape)
     print("Sizes PlanCT", planctLM_array.shape, planct_array.shape, planctITV_array.shape)
     print("Sizes Registered", PETRegist_array.shape, ACCTLMRegistLM_array.shape)
+    alphaVal=.5
+    for i in range(0, planct_array.shape[-2], 3):
+        if np.sum(planctITV_array[:, i, :]) > 0:
+            plt.figure(figsize=(16, 14))
+            plt.subplot(221), plt.imshow(planct_array[:, i, :], cmap='gray'), plt.axis("off")
+            plt.contour(planctITV_array[:, i, :])
+            plt.gca().invert_yaxis(), plt.title("Plan CT+ITV")
 
-    for i in range(0,planct_array.shape[0],3):
-        if np.sum(planctITV_array[i,:,:,]>0):
-            plt.figure()
-            plt.subplot(231), plt.imshow(planct_array[i, :, :], cmap="gray"), plt.axis('off')
-            plt.contour(planctLM_array[i, :, :]), plt.title("PlanCT+PlanCT Lung")
-            #plt.contour(planctITV_array[i, :, :])
+            plt.subplot(222), plt.imshow(planct_array[:, i, :], cmap='gray'), plt.axis("off")
+            plt.imshow(ACCTLMRegistLM_array[:, i, :], cmap='hot', alpha=alphaVal, ), plt.axis("off")
+            plt.gca().invert_yaxis(), plt.title("Regist CT")
 
-            plt.subplot(232), plt.imshow(acct_array[i, :, :], cmap="gray"), plt.axis('off')
-            plt.contour(acctLM_array[i, :, :]), plt.title("ACCT+ACCT Lungs")
-            #plt.contour(planctITV_array[i, :, :])
+            plt.subplot(223), plt.imshow(planct_array[:, i, :], cmap='gray'), plt.axis("off")
+            plt.imshow(PETRegist_array[:, i, :], cmap='hot', alpha=alphaVal, ), plt.axis("off")
+            plt.gca().invert_yaxis(), plt.title("Plan CT+PET")
 
-            plt.subplot(233),plt.imshow(planct_array[i, :, :], cmap="gray", alpha=1), plt.axis('off')
-            plt.contour(acctLM_array[i, :, :]),plt.title("PlanCT+PET+ACCTLung")
-
-            plt.subplot(234),plt.imshow(planct_array[i, :, :], cmap="gray", alpha=1)
-            plt.contour(ACCTLMRegistLM_array[i, :, :]), plt.axis('off'), plt.title("PlanCT+PETr+ACCTLungr")
-
-            plt.subplot(235),plt.imshow(acctLM_array[i, :, :]), plt.axis('off')
-            plt.contour(planctLM_array[i, :, :]), plt.title("ACCT LM+PlanCT LM")
-
-            plt.subplot(236),plt.imshow(ACCTLMRegistLM_array[i, :, :]), plt.axis('off')
-            plt.contour(planctLM_array[i, :, :]), plt.title("ACCT LM r+PlanCT LM")
+            plt.subplot(224), plt.imshow(planct_array[:, i, :], cmap='gray'), plt.axis("off")
+            plt.imshow(PETRegist_array[:, i, :], cmap='hot', alpha=alphaVal, ), plt.axis("off")
+            plt.contour(planctITV_array[:, i, :])
+            plt.gca().invert_yaxis(), plt.title("Plan CT+PET+ITV")
 
             plt.tight_layout()
-            plt.savefig(os.path.join(savePath,Px+"_"+str(i)))
+            plt.savefig(os.path.join(savePath, Px + "_" + str(i)))
+            plt.clf()
+            plt.close()
+
+    if False:
+        for i in range(0,planct_array.shape[0],3):
+            if np.sum(planctITV_array[i,:,:,]>0):
+                plt.figure()
+                plt.subplot(231), plt.imshow(planct_array[i, :, :], cmap="gray"), plt.axis('off')
+                plt.contour(planctLM_array[i, :, :]), plt.title("PlanCT+PlanCT Lung")
+                #plt.contour(planctITV_array[i, :, :])
+
+                plt.subplot(232), plt.imshow(acct_array[i, :, :], cmap="gray"), plt.axis('off')
+                plt.contour(acctLM_array[i, :, :]), plt.title("ACCT+ACCT Lungs")
+                #plt.contour(planctITV_array[i, :, :])
+
+                plt.subplot(233),plt.imshow(planct_array[i, :, :], cmap="gray", alpha=1), plt.axis('off')
+                plt.contour(acctLM_array[i, :, :]),plt.title("PlanCT+PET+ACCTLung")
+
+                plt.subplot(234),plt.imshow(planct_array[i, :, :], cmap="gray", alpha=1)
+                plt.contour(ACCTLMRegistLM_array[i, :, :]), plt.axis('off'), plt.title("PlanCT+PETr+ACCTLungr")
+
+                plt.subplot(235),plt.imshow(acctLM_array[i, :, :]), plt.axis('off')
+                plt.contour(planctLM_array[i, :, :]), plt.title("ACCT LM+PlanCT LM")
+
+                plt.subplot(236),plt.imshow(ACCTLMRegistLM_array[i, :, :]), plt.axis('off')
+                plt.contour(planctLM_array[i, :, :]), plt.title("ACCT LM r+PlanCT LM")
+
+                plt.tight_layout()
+                plt.savefig(os.path.join(savePath,Px+"_"+str(i)))
 
     return 0

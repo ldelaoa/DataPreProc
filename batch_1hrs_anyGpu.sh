@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --time=0-04:48:00
+#SBATCH --time=0-08:48:00
 #SBATCH --gpus-per-node=1
 #SBATCH --mem=120000
 module load Python/3.10.4-GCCcore-11.3.0

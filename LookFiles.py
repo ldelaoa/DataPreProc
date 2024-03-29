@@ -6,7 +6,7 @@ def LookFiles(folder):
     acct_pathLM , planct_pathLM = [],[]
     for root,dirs,files in os.walk(folder):
         for f in files:
-            if "%" in f or "thorax" in f.lower() or "ave" in f.lower() or "mip" in f.lower() or ("ct" in f.lower() and "ac_ct" not in f.lower() and "RTSTRUCT" not in f and "lungmask" not in f.lower() and "CORRECTED" not in f and "resampled" not in f and "cropped" not in f and "registered" not in f.lower() and "ac ct" not in f.lower() and "ac_ct" not in f.lower()):
+            if ("%" in f or "thorax" in f.lower() or "ave" in f.lower() or "mip" in f.lower()) or ("ct" in f.lower() and not "ac_ct" in f.lower() and not "RTSTRUCT" in f and not "lungmask" in f.lower() and not "CORRECTED" in f and not "resampled" in f and not "cropped"in f and not "registered" in f.lower() and not "ac ct" in f.lower() and not "ac_ct" in f.lower() and not "ld wb" in f.lower() and not "wb ld" in f.lower() and not "ac  ct" in f.lower()):
                 planct_path.append(os.path.join(folder,f))
             if "AC_CT_Body" in f or "CT van PET" in f or "CT LD" in f or "AC CT" in f or "AC  CT" in f and "registered" not in f.lower():
                 acct_path.append(os.path.join(folder, f))
@@ -22,6 +22,8 @@ def LookFiles(folder):
 
 
     print("ACCT",len(acct_path),"ACCT_LM",len(acct_pathLM),"PET",len(PET_path),"PlanCT",len(planct_path),"PlanCT_LM",len(planct_pathLM),"ITV",len(itv_path))
+    if len(planct_path)>1:
+        print("PlanCTs",planct_path)
     return acct_path,acct_pathLM,PET_path,planct_path,planct_pathLM,itv_path
 
 
