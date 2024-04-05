@@ -51,7 +51,9 @@ def LookFilesNiiRaw(folder):
             if "AC_CT_Body" in f or "CT van PET" in f or "CT LD" in f or "AC CT" in f or "AC  CT" in f and "registered" not in f.lower():
                 acct_path.append(os.path.join(root, f))
             
-            if "thorax" in f.lower() or "ave" in f.lower() or "mip" in f.lower(): planct_path.append(os.path.join(root,f))
+            
+            #if "trigger_delay" not in f.lower() and("thorax" in f.lower() or "ave" in f.lower() or "mip" in f.lower()): planct_path.append(os.path.join(root,f))
+            if "thorax_2mm" in f.lower() or "ave" in f.lower() or "mip" in f.lower(): planct_path.append(os.path.join(root,f))
 
             if any(label_tt in f for label_tt in itvtot_labels): itvTot.append(os.path.join(root,f))
             if any(label_tt in f for label_tt in itvtum_labels): itvTumor.append(os.path.join(root,f))

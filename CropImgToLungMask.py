@@ -50,11 +50,12 @@ def CropForegroundFunctionMONAI(ctImage,lungImage,tumorImage1=None):
     else:
         data_dict = {'CT': ctImage, 'Lung': lungImage}
     #Do the Transform
-    transform = Compose([CropForegroundd(keys=data_dict, source_key='Lung',k_divisible=256,margin=40)])
+    transform = Compose([CropForegroundd(keys=data_dict, source_key='Lung',k_divisible=[256,320,32],margin=0,allow_smaller=False)])
     data = transform(data_dict)
     ctnp = data['CT'][0].numpy()
     lungnp = data['Lung'][0].numpy()
     
+    print("Pre",ctImage.shape,"Post Crop Shape",ctnp.shape)
     if not(tumorImage1 is None):
         tumor1np = data['Tumor1'][0].numpy()
         return ctnp.astype(np.float64),lungnp.astype(np.uint8),tumor1np.astype(np.uint8)
