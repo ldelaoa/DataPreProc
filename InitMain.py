@@ -55,17 +55,22 @@ def main(root_path,savePath):
                     #Tumor and Crop
                     if numCT>0 and len(itvTot)> 0 and not(ITVconv_flag):
                         itvResolution = DataPreprocTumor(itvTot[0],ct_nii_ori)
+                        itvFilled = FixHoles(itvResolution)
+                        print("Check Sizes before Cropping",itvFilled.shape,ctResolution.shape,lungResolution.shape)
                         ctcropped,lungcropped,itvcropped = CropForegroundFunctionMONAI(ctResolution,lungResolution,itvResolution)
                         nametumor = 'ITV'
                         tumor2save = itvcropped
                         ITVconv_flag = True
                     elif numCT==7 and len(gtvTot)> 0 and not(GTVconv_flag):
                         gtvResolution = DataPreprocTumor(gtvTot[0],ct_nii_ori)
-                        ctcropped,lungcropped,gtvcropped = CropForegroundFunctionMONAI(ctResolution,lungResolution,gtvResolution)
+                        gtvFilled = FixHoles(gtvResolution)
+                        print("Check Sizes before Cropping",gtvFilled.shape,ctResolution.shape,lungResolution.shape)
+                        ctcropped,lungcropped,gtvcropped = CropForegroundFunctionMONAI(ctResolution,lungResolution,gtvFilled)
                         nametumor='GTV'
                         tumor2save = gtvcropped
                         GTVconv_flag = True
                     else:
+                        print("Check Sizes before Cropping",ctResolution.shape,lungResolution.shape)
                         ctcropped,lungcropped,_ = CropForegroundFunctionMONAI(ctResolution,lungResolution,None)
                         nametumor = None
                         tumor2save = None
