@@ -1,2 +1,5 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
+.ipynb_checkpoints/SimpleDisplay-checkpoint.ipynb
+.ipynb_checkpoints/CheckNiiProcessed_OkV1_CalculateRatiosandSizes-checkpoint.ipynb
+.ipynb_checkpoints/CheckNiiRaw-checkpoint.ipynb
