@@ -91,7 +91,9 @@ def main(root_path,savePath):
 
 
 if __name__ == "__main__" :
-    rootPath = "Z:/inbox/transferApr3_Ch2a/CT_ITV_GTV_XBP_Nii/CT_ITV_GTV_XBP_Nii/"
-    savePath = "Z:/Projectline_modelling_lung_cancer/Nii_Processed2/"
+    #rootPath = "Z:/inbox/transferApr3_Ch2a/CT_ITV_GTV_XBP_Nii/CT_ITV_GTV_XBP_Nii/"
+    rootPath = "//zkh/appdata/RTDicom/Projectline_modelling_lung_cancer/Users/Luis/CT_ITV_GTV_XBP_Nii/"
+    savePath = "//zkh/appdata/RTDicom/Projectline_modelling_lung_cancer/Users/Luis/CT_ITV_GTV_XBP_Nii_Processed/"
+    #savePath = "Z:/Projectline_modelling_lung_cancer/Nii_Processed2/"
     main(rootPath,savePath)
 
