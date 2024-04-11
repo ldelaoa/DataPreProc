@@ -40,13 +40,14 @@ def CropWithRegion(region,array,sitkImage):
 
 
 
-def CropForegroundFunctionMONAI(ctImage,lungImage,tumorImage1=None):
+def CropForegroundFunctionMONAI(ctImage,lungImage,tumorImage1=None,nodesImage1=None):
     ctImage = np.expand_dims(ctImage,axis=0)
     lungImage = np.expand_dims(lungImage,axis=0)
     #Expand Dims    
     if not(tumorImage1 is None):
         tumorImage1 = np.expand_dims(tumorImage1,axis=0)
-        data_dict = {'CT': ctImage, 'Lung': lungImage, 'Tumor1':tumorImage1}
+        nodesImage1 = np.expand_dims(nodesImage1,axis=0)
+        data_dict = {'CT': ctImage, 'Lung': lungImage, 'Tumor1':tumorImage1,"Nodes1":nodesImage1}
     else:
         data_dict = {'CT': ctImage, 'Lung': lungImage}
     #Do the Transform
@@ -58,9 +59,10 @@ def CropForegroundFunctionMONAI(ctImage,lungImage,tumorImage1=None):
     print("Pre",ctImage.shape,"Post Crop Shape",ctnp.shape)
     if not(tumorImage1 is None):
         tumor1np = data['Tumor1'][0].numpy()
-        return ctnp.astype(np.float64),lungnp.astype(np.uint8),tumor1np.astype(np.uint8)
+        nodes1np = data['Nodes1'][0].numpy()
+        return ctnp.astype(np.float64),lungnp.astype(np.uint8),tumor1np.astype(np.uint8),nodes1np.astype(np.uint8)
     else:
-        return ctnp.astype(np.float64),lungnp.astype(np.uint8),None
+        return ctnp.astype(np.float64),lungnp.astype(np.uint8),None,None
 
 
 

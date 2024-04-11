@@ -4,19 +4,33 @@ from NiiLoadAndOrientationFun import *
 from FixResolutionFun import *
 import numpy as np
 
-def DataPreprocTumor(tumorPath,ctReference):
-    #Tumor Ground Truth ITV and GTV
-    gtv_nii_ori = NiiLoadAndOrientation(tumorPath)#orient to LAS
-    if not(np.all(gtv_nii_ori.header['dim'] == ctReference.header['dim'])):
+def DataPreprocTumor(tumorPath,nodesPath,ctReference):
+    #Tumor Ground Truth
+    gtvTumor_nii_ori = NiiLoadAndOrientation(tumorPath)#orient to LAS
+    if not(np.all(gtvTumor_nii_ori.header['dim'] == ctReference.header['dim'])):
         madeupaffine = ctReference.affine
         madeupaffine[2][2] = 5
-        gtv_nii_ori = resample_img(gtv_nii_ori,  madeupaffine, ctReference.shape,interpolation='nearest')
+        gtvTumor_nii_ori = resample_img(gtvTumor_nii_ori,  madeupaffine, ctReference.shape,interpolation='nearest')
         #print("GTV Rescaled",gtv_nii_ori.header['dim'],ctReference.header['dim'])
-    gtv_np = gtv_nii_ori.get_fdata()
-    gtv_np[gtv_np>1.5]=0
-    gtv_np[gtv_np>0]=1
-    gtv_np_trans = np.transpose(gtv_np,[1,0,2])
-    gtv_np_rot = np.rot90(gtv_np_trans,axes=(0,1),k=1)
-    gtvResolution = FixResolution(gtv_np_rot,ctReference)
+    gtvTumor_np = gtvTumor_nii_ori.get_fdata()
+    #gtv_np[gtv_np>1.5]=0
+    #gtv_np[gtv_np>0]=1
+    gtvTumor_np_trans = np.transpose(gtvTumor_np,[1,0,2])
+    gtvTumor_np_rot = np.rot90(gtvTumor_np_trans,axes=(0,1),k=1)
+    gtvTumorResolution = FixResolution(gtvTumor_np_rot,ctReference)
+
+    #Nodes Ground Truth
+    gtvNodes_nii_ori = NiiLoadAndOrientation(nodesPath)#orient to LAS
+    if not(np.all(gtvNodes_nii_ori.header['dim'] == ctReference.header['dim'])):
+        madeupaffine = ctReference.affine
+        madeupaffine[2][2] = 5
+        gtvNodes_nii_ori = resample_img(gtvNodes_nii_ori,  madeupaffine, ctReference.shape,interpolation='nearest')
+        #print("GTV Rescaled",gtv_nii_ori.header['dim'],ctReference.header['dim'])
+    gtvNodes_np = gtvNodes_nii_ori.get_fdata()
+    #gtv_np[gtv_np>1.5]=0
+    #gtv_np[gtv_np>0]=1
+    gtvNodes_np_trans = np.transpose(gtvNodes_np,[1,0,2])
+    gtvNodes_np_rot = np.rot90(gtvNodes_np_trans,axes=(0,1),k=1)
+    gtvNodesResolution = FixResolution(gtvNodes_np_rot,ctReference)
     
-    return gtvResolution
+    return gtvTumorResolution,gtvNodesResolution
