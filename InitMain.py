@@ -10,30 +10,58 @@ from DataPreProcTumor import *
 from SaveFuns import *
 import logging
 
+def CreatePxList():
+    PxList_file  = "//zkh/appdata/RTDicom/Projectline_modelling_lung_cancer/Users/Luis/ListsOfPatients/ReRunNii2NiiProcessed.txt"
+    with open(PxList_file, 'r') as file:
+        PxList = [line.rstrip() for line in file]
+    print(len(PxList))
+    return PxList
+
+import os
+
+def delete_files_in_directory(directory):
+    for filename in os.listdir(directory):
+        filepath = os.path.join(directory, filename)
+        try:
+            if os.path.isfile(filepath):
+                os.remove(filepath)
+                print(f"Deleted {filepath}")
+            else:
+                print(f"{filepath} is not a file, skipping...")
+        except Exception as e:
+            print(f"Error deleting {filepath}: {e}")
+
+
 def main(root_path,savePath):
-    PxList = os.listdir(root_path)
-    logger = logging.getLogger('Nii2Nii_Log_V1')
+    PxList = CreatePxList()
+    #PxList = os.listdir(root_path)
+
+
+    logger = logging.getLogger('Nii2Nii_Log_V2')
     logger.setLevel(logging.DEBUG)
 
-    handler = logging.FileHandler('Nii2Nii_Log_V1.log')
+    handler = logging.FileHandler('Nii2Nii_Log_V2.log')
     handler.setLevel(logging.DEBUG)
 
     logger.addHandler(handler)
     
-    print("Tot PX:",len(PxList))
+    print("Total of PX:",len(PxList))
 
     for Px in PxList:
         savePath_Px = os.path.join(savePath,Px)
         ITVconv_flag = False
-        GTVconv_flag = False
+        GTVconv_flag = False        
+        if True:
+            delete_files_in_directory(savePath_Px)
+
         if not(os.path.exists(savePath_Px)):
             os.mkdir(savePath_Px)
         if len(os.listdir(savePath_Px))>0:
             print("Patient already with Files on the folder, not analyzing"+Px)
             logger.info("Patient already with Files on the folder, not analyzing"+str(Px))
         else:
-            print("Empty Folder",Px)
-            logger.info("Empty Folder"+str(Px))
+            print("Empty Folder Px ",Px)
+            logger.info("Empty Folder Px "+str(Px))
             acct_path, PET_path,planct_path,itvTot,itvTumor,itvNodes,gtvTot,gtvTumor,gtvNodes,bp0,bp10,bp20,bp30,bp40,bp50,bp60,bp70,bp80,bp90,bp100 = LookFilesNiiRaw(os.path.join(root_path, Px),logger)
 
             #Check if any delineation is available, else not convert
@@ -75,7 +103,7 @@ def main(root_path,savePath):
                             tumor2save = itvTumorcropped
                             nodes2save = itvNodesCropped
                             ITVconv_flag = True
-                        elif numCT==7 and gtvTumor is not None and gtvNodes is not None and not(GTVconv_flag):
+                        elif numCT>1 and gtvTumor is not None and gtvNodes is not None and not(GTVconv_flag):
                             gtvTumorResolution,gtvNodesResolution = DataPreprocTumor(gtvTumor[0],gtvNodes[0],ct_nii_ori)
                             gtvTumorFilled = FixHoles(gtvTumorResolution)
                             gtvNodesFilled = FixHoles(gtvNodesResolution)

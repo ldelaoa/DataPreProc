@@ -43,7 +43,7 @@ def  CheckTwoLabelCategories(gtvTot,gtvTumor,gtvNodes,TumorType_str,logger):
             imgNod = imgNodes_nii.get_fdata()  
             imgTum = imgTot-imgNod
             parent_dir = os.path.dirname(gtvNodes[0])
-            output_file = os.path.join(parent_dir,TumorType_str+'n_created.nii.gz')                      
+            output_file = os.path.join(parent_dir,TumorType_str+'p_created.nii.gz')                      
             merged_img = nib.Nifti1Image(imgTum, imgNodes_nii.affine, imgNodes_nii.header)
             nib.save(merged_img, output_file)
             return [output_file],gtvNodes

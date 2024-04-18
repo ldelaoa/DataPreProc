@@ -8,12 +8,12 @@ def ReadTumorLabels():
         config = yaml.safe_load(stream)
 
         itvtot_labels = config['itv_tot_labels']
-        itvtum_labels= config['itv_tumor_labels']
-        itvnod_labels = config['itv_ln_labels']
+        itvtum_labels= config['itv_tumor_labels_withCreated']#['itv_tumor_labels']
+        itvnod_labels = config['itv_ln_labels_withCreated']
 
         gtvtot_labels = config['gtv_tot_labels']
-        gtvtum_labels = config['gtv_tumor_labels']
-        gtvnod_labels = config['gtv_ln_labels']
+        gtvtum_labels = config['gtv_tumor_labels_withCreated']
+        gtvnod_labels = config['gtv_ln_labels_withCreated']
 
     return itvtot_labels,itvtum_labels,itvnod_labels,gtvtot_labels,gtvtum_labels,gtvnod_labels
 
@@ -54,7 +54,7 @@ def LookFilesNiiRaw(folder,logger):
             
             
             #if "trigger_delay" not in f.lower() and("thorax" in f.lower() or "ave" in f.lower() or "mip" in f.lower()): planct_path.append(os.path.join(root,f))
-            if "thorax_2mm" in f.lower() or "ave" in f.lower() or "mip" in f.lower(): planct_path.append(os.path.join(root,f))
+            if "thorax_3mm" in f.lower() or "thorax_2mm" in f.lower() or "ave" in f.lower() or "mip" in f.lower(): planct_path.append(os.path.join(root,f))
 
             if any(label_tt in f for label_tt in itvtot_labels): itvTot.append(os.path.join(root,f))
             if any(label_tt in f for label_tt in itvtum_labels): itvTumor.append(os.path.join(root,f))
@@ -75,22 +75,22 @@ def LookFilesNiiRaw(folder,logger):
             if any(bpTags_tt in f.lower() for bpTags_tt in bp_Tags['80%']): bp80.append(os.path.join(root, f))
             if any(bpTags_tt in f.lower() for bpTags_tt in bp_Tags['90%']): bp90.append(os.path.join(root, f))
             if any(bpTags_tt in f.lower() for bpTags_tt in bp_Tags['100%']): bp100.append(os.path.join(root, f))
-
-    print("ACCT",len(acct_path),"PET",len(PET_path))
-    print("PlanCT",len(planct_path))
-    print("ITVtot",len(itvTot),"ITVtum",len(itvTumor),"ITVnod",len(itvNodes))
-    print("GTVtot",len(gtvTot),"GTVtum",len(gtvTumor),"GTVnod",len(gtvNodes))
-    print("BP0",len(bp0),"bp10",len(bp10),"bp20",len(bp20),"bp30",len(bp30),"bp40",len(bp40))
-    print("BP50",len(bp50),"bp60",len(bp60),"bp70",len(bp70),"bp80",len(bp80),"bp90",len(bp90),"bp100",len(bp100))
-    print("Total Files in Px Folder",len(totalFiles))
-
-    logger.info("ACCT"+str(len(acct_path))+"PET"+str(len(PET_path)))
-    logger.info("PlanCT"+str(len(planct_path)))
-    logger.info("ITVtot"+str(len(itvTot))+"ITVtum"+str(len(itvTumor))+"ITVnod"+str(len(itvNodes)))
-    logger.info("GTVtot"+str(len(gtvTot))+"GTVtum"+str(len(gtvTumor))+"GTVnod"+str(len(gtvNodes)))
-    logger.info("BP0"+str(len(bp0))+"bp10"+str(len(bp10))+"bp20"+str(len(bp20))+"bp30"+str(len(bp30))+"bp40"+str(len(bp40)))
-    logger.info("BP50"+str(len(bp50))+"bp60"+str(len(bp60))+"bp70"+str(len(bp70))+"bp80"+str(len(bp80))+"bp90"+str(len(bp90))+"bp100"+str(len(bp100)))
-    logger.info("Total Files in Px Folder"+str(len(totalFiles)))
+    if False:
+        print("ACCT",len(acct_path),"PET",len(PET_path))
+        print("PlanCT",len(planct_path))
+        print("ITVtot",len(itvTot),"ITVtum",len(itvTumor),"ITVnod",len(itvNodes))
+        print("GTVtot",len(gtvTot),"GTVtum",len(gtvTumor),"GTVnod",len(gtvNodes))
+        print("BP0",len(bp0),"bp10",len(bp10),"bp20",len(bp20),"bp30",len(bp30),"bp40",len(bp40))
+        print("BP50",len(bp50),"bp60",len(bp60),"bp70",len(bp70),"bp80",len(bp80),"bp90",len(bp90),"bp100",len(bp100))
+        print("Total Files in Px Folder",len(totalFiles))
+    if False:
+        logger.info("ACCT"+str(len(acct_path))+"PET"+str(len(PET_path)))
+        logger.info("PlanCT"+str(len(planct_path)))
+        logger.info("ITVtot"+str(len(itvTot))+"ITVtum"+str(len(itvTumor))+"ITVnod"+str(len(itvNodes)))
+        logger.info("GTVtot"+str(len(gtvTot))+"GTVtum"+str(len(gtvTumor))+"GTVnod"+str(len(gtvNodes)))
+        logger.info("BP0"+str(len(bp0))+"bp10"+str(len(bp10))+"bp20"+str(len(bp20))+"bp30"+str(len(bp30))+"bp40"+str(len(bp40)))
+        logger.info("BP50"+str(len(bp50))+"bp60"+str(len(bp60))+"bp70"+str(len(bp70))+"bp80"+str(len(bp80))+"bp90"+str(len(bp90))+"bp100"+str(len(bp100)))
+        logger.info("Total Files in Px Folder"+str(len(totalFiles)))
 
     return acct_path, PET_path,planct_path,itvTot,itvTumor,itvNodes,gtvTot,gtvTumor,gtvNodes,bp0,bp10,bp20,bp30,bp40,bp50,bp60,bp70,bp80,bp90,bp100
 

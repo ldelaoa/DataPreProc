@@ -4,3 +4,5 @@ __pycache__/
 .ipynb_checkpoints/CheckNiiProcessed_OkV1_CalculateRatiosandSizes-checkpoint.ipynb
 .ipynb_checkpoints/CheckNiiRaw-checkpoint.ipynb
 Nii2Nii_Log_V1.log
+*.log
+.ipynb_checkpoints/CheckVolumesOfTumorAlgebra-checkpoint.ipynb
