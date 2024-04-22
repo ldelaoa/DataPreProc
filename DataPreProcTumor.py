@@ -9,9 +9,9 @@ def DataPreprocTumor(tumorPath,nodesPath,ctReference):
     gtvTumor_nii_ori = NiiLoadAndOrientation(tumorPath)#orient to LAS
     if not(np.all(gtvTumor_nii_ori.header['dim'] == ctReference.header['dim'])):
         madeupaffine = ctReference.affine
-        madeupaffine[2][2] = 5
+        madeupaffine[2][2] = madeupaffine[2][2]*((gtvTumor_nii_ori.header['dim'][3]/ctReference.header['dim'][3]))
         gtvTumor_nii_ori = resample_img(gtvTumor_nii_ori,  madeupaffine, ctReference.shape,interpolation='nearest')
-        #print("GTV Rescaled",gtv_nii_ori.header['dim'],ctReference.header['dim'])
+        print("GTV Rescaled",gtvTumor_nii_ori.header['dim'],ctReference.header['dim'])
     gtvTumor_np = gtvTumor_nii_ori.get_fdata()
     #gtv_np[gtv_np>1.5]=0
     #gtv_np[gtv_np>0]=1
@@ -23,9 +23,9 @@ def DataPreprocTumor(tumorPath,nodesPath,ctReference):
     gtvNodes_nii_ori = NiiLoadAndOrientation(nodesPath)#orient to LAS
     if not(np.all(gtvNodes_nii_ori.header['dim'] == ctReference.header['dim'])):
         madeupaffine = ctReference.affine
-        madeupaffine[2][2] = 5
+        madeupaffine[2][2] = madeupaffine[2][2]*((gtvNodes_nii_ori.header['dim'][3]/ctReference.header['dim'][3]))
         gtvNodes_nii_ori = resample_img(gtvNodes_nii_ori,  madeupaffine, ctReference.shape,interpolation='nearest')
-        #print("GTV Rescaled",gtv_nii_ori.header['dim'],ctReference.header['dim'])
+        print("GTV Rescaled",gtvNodes_nii_ori.header['dim'],ctReference.header['dim'])
     gtvNodes_np = gtvNodes_nii_ori.get_fdata()
     #gtv_np[gtv_np>1.5]=0
     #gtv_np[gtv_np>0]=1

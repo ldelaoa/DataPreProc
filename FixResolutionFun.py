@@ -10,10 +10,9 @@ def FixHoles(struct_np):
     return struct_filled
 
 
-def FixResolution(np2Resize,nii_wInfo):
+def FixResolution(np2Resize,nii_wInfo,desired_pixdims = (1.0,1.0,1.0)):
     
     current_pixdims = nii_wInfo.header.get_zooms()
-    desired_pixdims = (1.0,1.0,1.0)
     scaling_factors = [current / desired for desired, current in zip(desired_pixdims, current_pixdims)]
     
     newshape=np2Resize.shape[0]*scaling_factors[0],np2Resize.shape[1]*scaling_factors[1],np2Resize.shape[2]*scaling_factors[2]

@@ -11,7 +11,7 @@ from SaveFuns import *
 import logging
 
 def CreatePxList():
-    PxList_file  = "//zkh/appdata/RTDicom/Projectline_modelling_lung_cancer/Users/Luis/ListsOfPatients/ReRunNii2NiiProcessed.txt"
+    PxList_file  = "//zkh/appdata/RTDicom/Projectline_modelling_lung_cancer/Users/Luis/ListsOfPatients/PxSelectionforDCM2Nii_missing.txt"
     with open(PxList_file, 'r') as file:
         PxList = [line.rstrip() for line in file]
     print(len(PxList))
@@ -51,12 +51,12 @@ def main(root_path,savePath):
         savePath_Px = os.path.join(savePath,Px)
         ITVconv_flag = False
         GTVconv_flag = False        
-        if True:
+        if False:
             delete_files_in_directory(savePath_Px)
 
         if not(os.path.exists(savePath_Px)):
             os.mkdir(savePath_Px)
-        if len(os.listdir(savePath_Px))>0:
+        if False and len(os.listdir(savePath_Px))>0:
             print("Patient already with Files on the folder, not analyzing"+Px)
             logger.info("Patient already with Files on the folder, not analyzing"+str(Px))
         else:
@@ -72,28 +72,26 @@ def main(root_path,savePath):
                 gtvTumor,gtvNodes = CheckTwoLabelCategories(gtvTot,gtvTumor,gtvNodes,"GTV",logger)
                 itvTumor,itvNodes = CheckTwoLabelCategories(itvTot,itvTumor,itvNodes,"ITV",logger)
 
-
                 listAllCTs_paths = [acct_path,planct_path,bp0,bp10,bp20,bp30,bp40,bp50,bp60,bp70,bp80,bp90,bp100]
                 listAllCTs_names = ["ACCT","PlanCT","bp0","bp10","bp20","bp30","bp40","bp50","bp60","bp70","bp80","bp90","bp100"]
 
                 numCT=0
                 for currCTs in listAllCTs_paths:
                     if len(currCTs)>0:
-                        currCT_name = currCTs[0].split("\\")[-1].split(".")[-3]+"_"+listAllCTs_names[numCT]
-                        print(currCT_name,numCT)
-
-                        #CT
-                        ct_nii_ori = NiiLoadAndOrientation(currCTs[0])#orient to LAS
-                        ct_np_ori = ct_nii_ori.get_fdata()
-                        ctnpori_rot = np.rot90(ct_np_ori,axes=(0,1),k=-1)
-                        ctResolution = FixResolution(ctnpori_rot,ct_nii_ori)
-
-                        #Lung
-                        currCT_LungMask = CreateNOSaveLungMask(currCTs[0],SavePath=None)
-                        lungResolution = FixResolution(currCT_LungMask,ct_nii_ori)
-                        
                         #Tumor and Crop
                         if numCT>0 and itvTumor is not None and itvNodes is not None and not(ITVconv_flag):
+                            currCT_name = currCTs[0].split("\\")[-1].split(".")[-3]+"_"+listAllCTs_names[numCT]
+                            print(currCT_name,numCT)
+                            #CT
+                            ct_nii_ori = NiiLoadAndOrientation(currCTs[0])#orient to LAS
+                            ct_np_ori = ct_nii_ori.get_fdata()
+                            ctnpori_rot = np.rot90(ct_np_ori,axes=(0,1),k=-1)
+                            ctResolution = FixResolution(ctnpori_rot,ct_nii_ori)
+
+                            #Lung
+                            currCT_LungMask = CreateNOSaveLungMask(currCTs[0],SavePath=None)
+                            lungResolution = FixResolution(currCT_LungMask,ct_nii_ori)
+
                             itvTumorResolution,itvNodesResolution = DataPreprocTumor(itvTumor[0],itvNodes[0],ct_nii_ori)
                             itvTumorFilled = FixHoles(itvTumorResolution)
                             itvNodesFilled = FixHoles(itvNodesResolution)
@@ -103,7 +101,20 @@ def main(root_path,savePath):
                             tumor2save = itvTumorcropped
                             nodes2save = itvNodesCropped
                             ITVconv_flag = True
+                            saveNiiwName(savePath_Px,currCT_name,ctcropped,lungcropped,tumor2save,nodes2save,tumorname=nametumor)
                         elif numCT>1 and gtvTumor is not None and gtvNodes is not None and not(GTVconv_flag):
+                            currCT_name = currCTs[0].split("\\")[-1].split(".")[-3]+"_"+listAllCTs_names[numCT]
+                            print(currCT_name,numCT)
+                            #CT
+                            ct_nii_ori = NiiLoadAndOrientation(currCTs[0])#orient to LAS
+                            ct_np_ori = ct_nii_ori.get_fdata()
+                            ctnpori_rot = np.rot90(ct_np_ori,axes=(0,1),k=-1)
+                            ctResolution = FixResolution(ctnpori_rot,ct_nii_ori)
+
+                            #Lung
+                            currCT_LungMask = CreateNOSaveLungMask(currCTs[0],SavePath=None)
+                            lungResolution = FixResolution(currCT_LungMask,ct_nii_ori)
+
                             gtvTumorResolution,gtvNodesResolution = DataPreprocTumor(gtvTumor[0],gtvNodes[0],ct_nii_ori)
                             gtvTumorFilled = FixHoles(gtvTumorResolution)
                             gtvNodesFilled = FixHoles(gtvNodesResolution)
@@ -113,13 +124,14 @@ def main(root_path,savePath):
                             tumor2save = gtvTumorcropped
                             nodes2save = gtvNodesCropped
                             GTVconv_flag = True
-                        else:
+                            saveNiiwName(savePath_Px,currCT_name,ctcropped,lungcropped,tumor2save,nodes2save,tumorname=nametumor)
+                        elif False:
                             logger.info("Check Sizes before Cropping"+str(Px)+str(ctResolution.shape)+str(lungResolution.shape))
                             ctcropped,lungcropped,_,_ = CropForegroundFunctionMONAI(ctResolution,lungResolution,None)
                             nametumor = None
                             tumor2save = None
                             nodes2save = None
-                        saveNiiwName(savePath_Px,currCT_name,ctcropped,lungcropped,tumor2save,nodes2save,tumorname=nametumor)#FIX
+                            saveNiiwName(savePath_Px,currCT_name,ctcropped,lungcropped,tumor2save,nodes2save,tumorname=nametumor)
                     numCT+=1
             print("----------------------")
 
