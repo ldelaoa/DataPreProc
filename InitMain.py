@@ -11,7 +11,7 @@ from SaveFuns import *
 import logging
 
 def CreatePxList():
-    PxList_file  = "//zkh/appdata/RTDicom/Projectline_modelling_lung_cancer/Users/Luis/ListsOfPatients/PxSelectionforDCM2Nii_missing.txt"
+    PxList_file  = "//zkh/appdata/RTDicom/Projectline_modelling_lung_cancer/Users/Luis/ListsOfPatients/PxSelectionforDCM2Nii_pt1.txt"
     with open(PxList_file, 'r') as file:
         PxList = [line.rstrip() for line in file]
     print(len(PxList))
@@ -37,10 +37,10 @@ def main(root_path,savePath):
     #PxList = os.listdir(root_path)
 
 
-    logger = logging.getLogger('Nii2Nii_Log_V2')
+    logger = logging.getLogger('Nii2Nii_Log_V2_pt1')
     logger.setLevel(logging.DEBUG)
 
-    handler = logging.FileHandler('Nii2Nii_Log_V2.log')
+    handler = logging.FileHandler('Nii2Nii_Log_V2_pt1.log')
     handler.setLevel(logging.DEBUG)
 
     logger.addHandler(handler)
