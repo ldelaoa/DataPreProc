@@ -11,7 +11,7 @@ from SaveFuns import *
 import logging
 
 def CreatePxList():
-    PxList_file  = "//zkh/appdata/RTDicom/Projectline_modelling_lung_cancer/Users/Luis/ListsOfPatients/PxSelectionforDCM2Nii_pt1.txt"
+    PxList_file  = "//zkh/appdata/RTDicom/Projectline_modelling_lung_cancer/Users/Luis/ListsOfPatients/PxSelectionforDCM2Nii.txt"
     with open(PxList_file, 'r') as file:
         PxList = [line.rstrip() for line in file]
     print(len(PxList))
@@ -37,10 +37,10 @@ def main(root_path,savePath):
     #PxList = os.listdir(root_path)
 
 
-    logger = logging.getLogger('Nii2Nii_Log_V2_pt1')
+    logger = logging.getLogger('Nii2Nii_Log_V3')
     logger.setLevel(logging.DEBUG)
 
-    handler = logging.FileHandler('Nii2Nii_Log_V2_pt1.log')
+    handler = logging.FileHandler('Nii2Nii_Log_V3.log')
     handler.setLevel(logging.DEBUG)
 
     logger.addHandler(handler)
@@ -70,16 +70,18 @@ def main(root_path,savePath):
                 logger.warning("ERROR Tumor Info Not existing"+str(Px))
             else:
                 gtvTumor,gtvNodes = CheckTwoLabelCategories(gtvTot,gtvTumor,gtvNodes,"GTV",logger)
-                itvTumor,itvNodes = CheckTwoLabelCategories(itvTot,itvTumor,itvNodes,"ITV",logger)
+                #itvTumor,itvNodes = CheckTwoLabelCategories(itvTot,itvTumor,itvNodes,"ITV",logger)
 
-                listAllCTs_paths = [acct_path,planct_path,bp0,bp10,bp20,bp30,bp40,bp50,bp60,bp70,bp80,bp90,bp100]
-                listAllCTs_names = ["ACCT","PlanCT","bp0","bp10","bp20","bp30","bp40","bp50","bp60","bp70","bp80","bp90","bp100"]
+                #listAllCTs_paths = [acct_path,planct_path,bp0,bp10,bp20,bp30,bp40,bp50,bp60,bp70,bp80,bp90,bp100]
+                #listAllCTs_names = ["ACCT","PlanCT","bp0","bp10","bp20","bp30","bp40","bp50","bp60","bp70","bp80","bp90","bp100"]
+                listAllCTs_names = ["bp50","bp60","bp40",]
+                listAllCTs_paths = [bp50,bp60,bp40]
 
                 numCT=0
                 for currCTs in listAllCTs_paths:
                     if len(currCTs)>0:
                         #Tumor and Crop
-                        if numCT>0 and itvTumor is not None and itvNodes is not None and not(ITVconv_flag):
+                        if False and numCT>0 and itvTumor is not None and itvNodes is not None and not(ITVconv_flag):
                             currCT_name = currCTs[0].split("\\")[-1].split(".")[-3]+"_"+listAllCTs_names[numCT]
                             print(currCT_name,numCT)
                             #CT
@@ -102,7 +104,7 @@ def main(root_path,savePath):
                             nodes2save = itvNodesCropped
                             ITVconv_flag = True
                             saveNiiwName(savePath_Px,currCT_name,ctcropped,lungcropped,tumor2save,nodes2save,tumorname=nametumor)
-                        elif numCT>1 and gtvTumor is not None and gtvNodes is not None and not(GTVconv_flag):
+                        elif gtvTumor is not None and gtvNodes is not None and not(GTVconv_flag): # and numCT>1 this causes mialign, it can cause the GTV to be alineated with the BP0
                             currCT_name = currCTs[0].split("\\")[-1].split(".")[-3]+"_"+listAllCTs_names[numCT]
                             print(currCT_name,numCT)
                             #CT
