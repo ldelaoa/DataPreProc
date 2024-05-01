@@ -16,12 +16,13 @@ def NormalizeImage(image,intFlag=None,saveFilename=None,originReference=None,des
         new_size = [int(image.GetSize()[i] * resampling_factor[i]) for i in range(image.GetDimension())]    
         resampler.SetSize(new_size)
         resampler.SetOutputSpacing(desired_spacing)
-        print("Change Size and Spacing")
+        print("Change Spacing",desired_spacing)
     elif desired_Size is not None:
         spacing_ratio = [sz1/sz2 for sz1, sz2 in zip(image.GetSize(), new_size)]
         new_spacing = [sz * ratio for sz, ratio in zip(image.GetSpacing(), spacing_ratio)]
         resampler.SetSize(desired_Size)
         resampler.SetOutputSpacing(new_spacing)
+        print("Changing Size",desired_Size)
     else:
         resampler.SetSize(image.GetSize())
         resampler.SetOutputSpacing(image.GetSpacing())
@@ -32,10 +33,10 @@ def NormalizeImage(image,intFlag=None,saveFilename=None,originReference=None,des
         resampler.SetOutputOrigin(originReference)
         print("Change Origin")
 
-    #if intFlag :
-    #    resampler.SetInterpolator(sitk.sitkNearestNeighbor)
+    if intFlag=="NN":
+        resampler.SetInterpolator(sitk.sitkLabelGaussian)
     #else:
-    #    resampler.SetInterpolator(sitk.sitkLinear)
+    #    resampler.SetInterpolator(sitk.sitkBSpline)
 
     if saveFilename is not None:
         sitk.WriteImage(resampled_image,saveFilename)

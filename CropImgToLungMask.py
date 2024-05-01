@@ -56,7 +56,7 @@ def CropForegroundFunctionMONAI(ctImage,lungImage,tumorImage1=None,nodesImage1=N
     ctnp = data['CT'][0].numpy()
     lungnp = data['Lung'][0].numpy()
     
-    print("Pre",ctImage.shape,"Post Crop Shape",ctnp.shape)
+    print("Pre",ctImage[0].shape,"Post Crop Shape",ctnp.shape)
     if not(tumorImage1 is None):
         tumor1np = data['Tumor1'][0].numpy()
         nodes1np = data['Nodes1'][0].numpy()
