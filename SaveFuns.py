@@ -14,14 +14,12 @@ def saveMetrics(PxList,MetricsList,savePath):
     print(f'Data has been saved to {csv_file_path}')
     return 0
 
-def saveNiiwName(savePath,nameCT,ct2save,lung2save,tumor2save=None,nodes2save=None,tumorname=None):
+def saveNiiwName(savePath,nameCT,ct2save,tumor2save=None,nodes2save=None,tumorname=None):
     if not(os.path.exists(savePath)):
         os.mkdir(savePath)
 
-    CT_nii_2save = nib.Nifti1Image(ct2save, np.eye(4))  
-    lung_nii_2save = nib.Nifti1Image(lung2save, np.eye(4))  
+    CT_nii_2save = nib.Nifti1Image(ct2save, np.eye(4))   
     nib.save(CT_nii_2save, os.path.join(savePath,nameCT+"_CTProcessed.nii.gz"))
-    nib.save(lung_nii_2save, os.path.join(savePath,nameCT+"_LungProcessed.nii.gz"))
     if not(tumorname is None):
         tumor_nii_2save = nib.Nifti1Image(tumor2save, np.eye(4))  
         nib.save(tumor_nii_2save, os.path.join(savePath,tumorname+"p_GTProcessed.nii.gz"))

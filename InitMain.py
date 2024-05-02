@@ -50,6 +50,12 @@ def delete_files_in_directory(directory):
         except Exception as e:
             print(f"Error deleting {filepath}: {e}")
 
+def DataPreProcLung(CT4Lung):
+    currCT_LungMask = CreateNOSaveLungMask(CT4Lung,SavePath=None)
+    normLungMask  = NormalizeImage(currCT_LungMask,None,None,None,(1,1,1),None)
+    normLungMask_Nii = Sitk2Nii(normLungMask).get_fdata()
+    normLustmask_rot = np.rot90(normLungMask_Nii,axes=(0,1),k=-1)  
+    return  normLustmask_rot
 
 def main(root_path,savePath):
     PxList = CreatePxList()
@@ -74,10 +80,7 @@ def main(root_path,savePath):
 
         if not(os.path.exists(savePath_Px)):
             os.mkdir(savePath_Px)
-        if len(os.listdir(savePath_Px))>0:
-            print("Patient already with Files on the folder, not analyzing"+Px)
-            logger.info("Patient already with Files on the folder, not analyzing"+str(Px))
-        else:
+        if len(os.listdir(savePath_Px))==0:
             print("Empty Folder Px ",Px)
             logger.info("Empty Folder Px "+str(Px))
             acct_path, PET_path,planct_path,itvTot,itvTumor,itvNodes,gtvTot,gtvTumor,gtvNodes,bp0,bp10,bp20,bp30,bp40,bp50,bp60,bp70,bp80,bp90,bp100 = LookFilesNiiRaw(os.path.join(root_path, Px),logger)
@@ -112,21 +115,15 @@ def main(root_path,savePath):
                             itvTumorResolution,itvNodesResolution = DataPreprocTumor(itvTumor[0],itvNodes[0],ct_nii_ori)
                             
                             #Lung
-                            currCT_LungMask = CreateNOSaveLungMask(normCT,SavePath=None)
-                            normLungMask  = NormalizeImage(currCT_LungMask,None,None,None,(1,1,1),None)
-                            normLungMask_Nii = Sitk2Nii(normLungMask).get_fdata()
-                            normLustmask_rot = np.rot90(normLungMask_Nii,axes=(0,1),k=-1)
+                            normLustmask_rot = DataPreProcLung(normCT)
                         
                             #itvTumorFilled = FixHoles(itvTumorResolution)
                             #itvNodesFilled = FixHoles(itvNodesResolution)
                             logger.info("Check Sizes before Cropping"+str(Px)+str(itvTumorResolution.shape)+str(itvNodesResolution.shape)+str(ctnpori_rot.shape)+str(normLustmask_rot.shape))
-                            ctcropped,lungcropped,itvTumorcropped,itvNodesCropped = CropForegroundFunctionMONAI(ctnpori_rot,normLustmask_rot,itvTumorResolution,itvNodesResolution)
-
+                            ctcropped,itvTumorcropped,itvNodesCropped = CropForegroundFunctionMONAI(ctnpori_rot,normLustmask_rot,itvTumorResolution,itvNodesResolution)
                             nametumor = 'ITV'
-                            tumor2save = itvTumorcropped
-                            nodes2save = itvNodesCropped
                             ITVconv_flag = True
-                            saveNiiwName(savePath_Px,currCT_name,ctcropped,lungcropped,tumor2save,nodes2save,tumorname=nametumor)
+                            saveNiiwName(savePath_Px,currCT_name,ctcropped,itvTumorcropped,itvNodesCropped,tumorname=nametumor)
                         elif numCT!= 0 and gtvTumor is not None and gtvNodes is not None and not(GTVconv_flag): 
                             currCT_name = currCTs[0].split("\\")[-1].split(".")[-3]+"_"+listAllCTs_names[numCT]
                             print(currCT_name,numCT)
@@ -140,18 +137,13 @@ def main(root_path,savePath):
                             gtvTumorResolution,gtvNodesResolution = DataPreprocTumor(gtvTumor[0],gtvNodes[0],ct_nii_ori)
                             
                            #Lung
-                            currCT_LungMask = CreateNOSaveLungMask(normCT,SavePath=None)
-                            normLungMask  = NormalizeImage(currCT_LungMask,None,None,None,(1,1,1),None)
-                            normLungMask_Nii = Sitk2Nii(normLungMask).get_fdata()
-                            normLustmask_rot = np.rot90(normLungMask_Nii,axes=(0,1),k=-1)
+                            normLustmask_rot = DataPreProcLung(normCT)
                             
                             logger.info("Check Sizes before Cropping"+str(Px)+str(gtvTumorResolution.shape)+str(gtvNodesResolution.shape)+str(ctnpori_rot.shape)+str(normLustmask_rot.shape))
-                            ctcropped,lungcropped,gtvTumorcropped,gtvNodesCropped = CropForegroundFunctionMONAI(ctnpori_rot,normLustmask_rot,gtvTumorResolution,gtvNodesResolution)
+                            ctcropped,gtvTumorcropped,gtvNodesCropped = CropForegroundFunctionMONAI(ctnpori_rot,normLustmask_rot,gtvTumorResolution,gtvNodesResolution)
                             nametumor='GTV'
-                            tumor2save = gtvTumorcropped
-                            nodes2save = gtvNodesCropped
                             GTVconv_flag = True
-                            saveNiiwName(savePath_Px,currCT_name,ctcropped,lungcropped,tumor2save,nodes2save,tumorname=nametumor)
+                            saveNiiwName(savePath_Px,currCT_name,ctcropped,gtvTumorcropped,gtvNodesCropped,tumorname=nametumor)
                         elif False:
                             logger.info("Check Sizes before Cropping"+str(Px)+str(ctResolution.shape)+str(lungResolution.shape))
                             ctcropped,lungcropped,_,_ = CropForegroundFunctionMONAI(ctResolution,lungResolution,None)
