@@ -41,16 +41,18 @@ def CropForegroundFunctionMONAI(ctImage,lungImage,tumorImage1=None,nodesImage1=N
     lungImage = np.expand_dims(lungImage,axis=0)
     #Expand Dims    
     if not(tumorImage1 is None):
+        print("Cropping with Tumor")
         tumorImage1 = np.expand_dims(tumorImage1,axis=0)
         nodesImage1 = np.expand_dims(nodesImage1,axis=0)
         data_dict = {'CT': ctImage, 'Lung': lungImage, 'Tumor1':tumorImage1,"Nodes1":nodesImage1}
-    else:
-        data_dict = {'CT': ctImage, 'Lung': lungImage}
-    #Do the Transform
-    if not(tumorImage1 is None):
+
         transform = Compose([CropForegroundd(keys=["CT","Tumor1","Nodes1"], source_key='Lung',k_divisible=[320,320,320],margin=0,allow_smaller=False)])
     else:
+        print("Cropping without tumor")
+
+        data_dict = {'CT': ctImage, 'Lung': lungImage}
         transform = Compose([CropForegroundd(keys="CT", source_key='Lung',k_divisible=[320,320,320],margin=0,allow_smaller=False)])
+
     data = transform(data_dict)
     ctnp = data['CT'][0].numpy()
     
@@ -58,7 +60,8 @@ def CropForegroundFunctionMONAI(ctImage,lungImage,tumorImage1=None,nodesImage1=N
     if not(tumorImage1 is None):
         tumor1np = data['Tumor1'][0].numpy()
         nodes1np = data['Nodes1'][0].numpy()
-        return ctnp.astype(np.float64),tumor1np.astype(np.uint8),nodes1np.astype(np.uint8)
+        #return ctnp.astype(np.float64),tumor1np.astype(np.int16),nodes1np.astype(np.int16)
+        return ctnp,tumor1np,nodes1np
     else:
         return ctnp.astype(np.float64),None,None
 

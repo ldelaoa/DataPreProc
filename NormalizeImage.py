@@ -7,7 +7,6 @@ def NormalizeImage(image,intFlag=None,saveFilename=None,originReference=None,des
     if currDirection[4] == -1:
         image = sitk.Flip(image,(False, True, False))
     
-
     resampler = sitk.ResampleImageFilter()
 
     if desired_spacing is not None:
@@ -42,5 +41,5 @@ def NormalizeImage(image,intFlag=None,saveFilename=None,originReference=None,des
         sitk.WriteImage(resampled_image,saveFilename)
 
     resampled_image = resampler.Execute(image)
-
+    del image
     return resampled_image
