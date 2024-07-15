@@ -4,6 +4,7 @@ from NiiLoadAndOrientationFun import *
 from FixResolutionFun import *
 import numpy as np
 from NormalizeImage import *
+from MergePandN_Fun import GetNames
 
 def Sitk2Nii(sitk_image):
     image_array = sitk.GetArrayFromImage(sitk_image)
@@ -26,7 +27,31 @@ def Nii2Sitk(nifti_image):
     del nifti_image
     return sitk_image
 
-def DataPreprocTumor(tumorPath,nodesPath,ctReference):
+def DataPreprocStruct(structPath,ctReference):
+    struct_name = structPath.split('\\')[-1].split('.')[0]
+    
+    gtvTumor_nii_ori = NiiLoadAndOrientation(structPath)#orient to LAS
+    gtvTumor_itk_norm = NormalizeImage(Nii2Sitk(gtvTumor_nii_ori),None,None,Nii2Sitk(ctReference).GetOrigin(),(1,1,1),ctReference.shape)
+    gtvTumor_nii_norm = Sitk2Nii(gtvTumor_itk_norm)
+    del gtvTumor_itk_norm
+    del gtvTumor_nii_ori
+    if False and not(np.all(gtvTumor_nii_norm.header['dim'] == ctReference.header['dim'])):
+        madeupaffine = ctReference.affine
+        madeupaffine[2][2] = madeupaffine[2][2]*((gtvTumor_nii_norm.header['dim'][3]/ctReference.header['dim'][3]))
+        gtvTumor_nii_norm = resample_img(gtvTumor_nii_norm,  madeupaffine, ctReference.shape,interpolation='nearest')
+        print("GTV Rescaled",gtvTumor_nii_norm.header['dim'],ctReference.header['dim'])
+    gtvTumor_np = gtvTumor_nii_norm.get_fdata()
+    del gtvTumor_nii_norm
+    #gtv_np[gtv_np>1.5]=0
+    #gtv_np[gtv_np>0]=1
+    gtvTumor_np_trans = np.transpose(gtvTumor_np,[1,0,2])
+    gtvTumor_np_rot = np.rot90(gtvTumor_np_trans,axes=(0,1),k=1)
+    #gtvTumorResolution = FixResolution(gtvTumor_np_rot,gtvTumor_nii_norm)
+    return gtvTumor_np_rot,struct_name
+
+
+
+def DataPreprocTumor_DEPRECATED(tumorPath,nodesPath,ctReference):
     
     gtvTumor_nii_ori = NiiLoadAndOrientation(tumorPath)#orient to LAS
     gtvTumor_itk_norm = NormalizeImage(Nii2Sitk(gtvTumor_nii_ori),None,None,Nii2Sitk(ctReference).GetOrigin(),(1,1,1),None)

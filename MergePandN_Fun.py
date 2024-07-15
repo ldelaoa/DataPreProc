@@ -2,7 +2,18 @@ import nibabel as nib
 import os
 import numpy as np
     
-def  CheckTwoLabelCategories(gtvTot,gtvTumor,gtvNodes,TumorType_str,logger):
+def GetNames(list_of_paths):
+    name_list = []
+    if len(list_of_paths)>0: 
+        for currstruct in list_of_paths:
+            name_list.append(currstruct.split('\\')[-1].split('.')[0])
+    return name_list
+
+def CheckTwoLabelCategories(gtvTot,gtvTumor,gtvNodes,TumorType_str,logger):
+    tot_name = GetNames(gtvTot)
+    tumor_name  = GetNames(gtvTumor)
+    nodes_name = GetNames(gtvNodes)
+
     if len(gtvTumor)>0 and len(gtvNodes)>0:
         return  gtvTumor,gtvNodes
     

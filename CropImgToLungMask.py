@@ -35,6 +35,60 @@ def CropWithRegion(region,array,sitkImage):
 
     return cropped_img
 
+def CropForegroundFunctionMONAI_v2(ctImage,lungImage,structImage_list=[],structName_list=[]):
+    ctImage = np.expand_dims(ctImage,axis=0)
+    lungImage = np.expand_dims(lungImage,axis=0)
+    #Expand Dims    
+    if len(structImage_list)==0:
+        print("Cropping without tumor")
+        data_dict = {'CT': ctImage, 'Lung': lungImage}
+        transform = Compose([CropForegroundd(keys="CT", source_key='Lung',k_divisible=[320,320,320],margin=0,allow_smaller=False)])
+    
+    elif len(structImage_list)==1:
+        structImage = np.expand_dims(structImage_list[0],axis=0)
+        data_dict = {'CT': ctImage, 'Lung': lungImage, structName_list[0]:structImage}
+        transform = Compose([CropForegroundd(keys=["CT",structName_list[0]], source_key='Lung',k_divisible=[320,320,320],margin=0,allow_smaller=False)])
+
+    elif len(structImage_list)==2:
+        structImage = np.expand_dims(structImage_list[0],axis=0)
+        structImage2 = np.expand_dims(structImage_list[1],axis=0)
+        data_dict = {'CT': ctImage, 'Lung': lungImage, structName_list[0]:structImage,structName_list[1]:structImage2}
+        transform = Compose([CropForegroundd(keys=["CT",structName_list[0],structName_list[1]], source_key='Lung',k_divisible=[320,320,320],margin=0,allow_smaller=False)])
+
+    elif len(structImage_list)==3:
+        structImage = np.expand_dims(structImage_list[0],axis=0)
+        structImage2 = np.expand_dims(structImage_list[1],axis=0)
+        structImage3 = np.expand_dims(structImage_list[2],axis=0)
+        print(structImage.shape,structImage2.shape,structImage3.shape,ctImage.shape)
+        data_dict = {'CT': ctImage, 'Lung': lungImage, structName_list[0]:structImage,structName_list[1]:structImage2,structName_list[2]:structImage3}
+        transform = Compose([CropForegroundd(keys=["CT",structName_list[0],structName_list[1],structName_list[2]], source_key='Lung',k_divisible=[320,320,320],margin=0,allow_smaller=False)])
+    
+    data = transform(data_dict)
+    ctnp = data['CT'][0].numpy()
+    
+    print("Pre",ctImage[0].shape,"Post Crop Shape",ctnp.shape)
+    if len(structImage_list)==0:
+        return ctnp.astype(np.float64),None,None,None
+    
+    elif len(structImage_list)==1:
+        struct1np = data[structName_list[0]][0].numpy()
+        return ctnp,struct1np,None,None
+    
+    elif len(structImage_list)==2:
+        struct1np = data[structName_list[0]][0].numpy()
+        struct2np = data[structName_list[1]][0].numpy()
+        return ctnp,struct1np,struct2np,None
+
+    elif len(structImage_list)==3:
+        struct1np = data[structName_list[0]][0].numpy()
+        struct2np = data[structName_list[1]][0].numpy()
+        struct3np = data[structName_list[2]][0].numpy()
+        return ctnp,struct1np,struct2np,struct3np
+
+
+
+
+
 
 def CropForegroundFunctionMONAI(ctImage,lungImage,tumorImage1=None,nodesImage1=None):
     ctImage = np.expand_dims(ctImage,axis=0)

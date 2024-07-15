@@ -8,12 +8,12 @@ def ReadTumorLabels():
         config = yaml.safe_load(stream)
 
         itvtot_labels = config['itv_tot_labels']
-        itvtum_labels= config['itv_tumor_labels_withCreated']#['itv_tumor_labels']
-        itvnod_labels = config['itv_ln_labels_withCreated']
+        itvtum_labels= config['itv_tumor_labels_withOUTCreated']#['itv_tumor_labels']
+        itvnod_labels = config['itv_ln_labels_withOUTCreated']
 
         gtvtot_labels = config['gtv_tot_labels']
-        gtvtum_labels = config['gtv_tumor_labels_withCreated']
-        gtvnod_labels = config['gtv_ln_labels_withCreated']
+        gtvtum_labels = config['gtv_tumor_labels_withOUTCreated']
+        gtvnod_labels = config['gtv_ln_labels_withOUTCreated']
 
     return itvtot_labels,itvtum_labels,itvnod_labels,gtvtot_labels,gtvtum_labels,gtvnod_labels
 
@@ -56,13 +56,13 @@ def LookFilesNiiRaw(folder,logger):
             #if "trigger_delay" not in f.lower() and("thorax" in f.lower() or "ave" in f.lower() or "mip" in f.lower()): planct_path.append(os.path.join(root,f))
             if "thorax_3mm" in f.lower() or "thorax_2mm" in f.lower() or "ave" in f.lower() or "mip" in f.lower(): planct_path.append(os.path.join(root,f))
 
-            if any(label_tt in f for label_tt in itvtot_labels): itvTot.append(os.path.join(root,f))
-            if any(label_tt in f for label_tt in itvtum_labels): itvTumor.append(os.path.join(root,f))
-            if any(label_tt in f for label_tt in itvnod_labels): itvNodes.append(os.path.join(root,f))
+            if any(label_tt.lower() in f.lower() for label_tt in itvtot_labels): itvTot.append(os.path.join(root,f))
+            if any(label_tt.lower() in f.lower() for label_tt in itvtum_labels): itvTumor.append(os.path.join(root,f))
+            if any(label_tt.lower() in f.lower() for label_tt in itvnod_labels): itvNodes.append(os.path.join(root,f))
             
-            if any(label_tt in f for label_tt in gtvtot_labels) and "igtv" not in f.lower(): gtvTot.append(os.path.join(root,f))
-            if any(label_tt in f for label_tt in gtvtum_labels) and "igtv" not in f.lower(): gtvTumor.append(os.path.join(root,f))
-            if any(label_tt in f for label_tt in gtvnod_labels) and "igtv" not in f.lower(): gtvNodes.append(os.path.join(root,f))
+            if any(label_tt.lower() in f.lower() for label_tt in gtvtot_labels) and "igtv" not in f.lower(): gtvTot.append(os.path.join(root,f))
+            if any(label_tt.lower() in f.lower() for label_tt in gtvtum_labels) and "igtv" not in f.lower(): gtvTumor.append(os.path.join(root,f))
+            if any(label_tt.lower() in f.lower() for label_tt in gtvnod_labels) and "igtv" not in f.lower(): gtvNodes.append(os.path.join(root,f))
 
             if any(bpTags_tt in f.lower() for bpTags_tt in bp_Tags['0%']): bp0.append(os.path.join(root, f))
             if any(bpTags_tt in f.lower() for bpTags_tt in bp_Tags['10%']): bp10.append(os.path.join(root, f))

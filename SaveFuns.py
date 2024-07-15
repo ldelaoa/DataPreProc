@@ -14,17 +14,23 @@ def saveMetrics(PxList,MetricsList,savePath):
     print(f'Data has been saved to {csv_file_path}')
     return 0
 
-def saveNiiwName(savePath,nameCT,ct2save,tumor2save=None,nodes2save=None,tumorname=None):
+def saveNiiwName(savePath,nameCT,ct2save,struct1Tosave=None,struct2Tosave=None,struct3Tosave=None,tumorname=None,listStructNames=[]):
     if not(os.path.exists(savePath)):
         os.mkdir(savePath)
 
     CT_nii_2save = nib.Nifti1Image(ct2save, np.eye(4))   
     nib.save(CT_nii_2save, os.path.join(savePath,nameCT+"_CTProcessed.nii.gz"))
-    if not(tumorname is None):
-        tumor_nii_2save = nib.Nifti1Image(tumor2save, np.eye(4))  
-        nib.save(tumor_nii_2save, os.path.join(savePath,tumorname+"p_GTProcessed.nii.gz"))
 
-        nodes_nii_2save = nib.Nifti1Image(nodes2save, np.eye(4))  
-        nib.save(nodes_nii_2save, os.path.join(savePath,tumorname+"n_GTProcessed.nii.gz"))
-    print("saved CT: ",nameCT,"tumor",tumorname)
+    if not(struct1Tosave is None):
+        tumor_nii_2save = nib.Nifti1Image(struct1Tosave, np.eye(4))  
+        nib.save(tumor_nii_2save, os.path.join(savePath,tumorname+listStructNames[0]+"_GTProcessed.nii.gz"))
+
+    if not(struct2Tosave is None):
+        tumor_nii_2save = nib.Nifti1Image(struct2Tosave, np.eye(4))  
+        nib.save(tumor_nii_2save, os.path.join(savePath,tumorname+listStructNames[1]+"_GTProcessed.nii.gz"))
+
+    if not(struct3Tosave is None):
+        tumor_nii_2save = nib.Nifti1Image(struct3Tosave, np.eye(4))  
+        nib.save(tumor_nii_2save, os.path.join(savePath,tumorname+listStructNames[2]+"_GTProcessed.nii.gz"))
+
     return 0
