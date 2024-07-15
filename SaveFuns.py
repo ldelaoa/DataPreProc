@@ -23,14 +23,14 @@ def saveNiiwName(savePath,nameCT,ct2save,struct1Tosave=None,struct2Tosave=None,s
 
     if not(struct1Tosave is None):
         tumor_nii_2save = nib.Nifti1Image(struct1Tosave, np.eye(4))  
-        nib.save(tumor_nii_2save, os.path.join(savePath,tumorname+listStructNames[0]+"_GTProcessed.nii.gz"))
+        nib.save(tumor_nii_2save, os.path.join(savePath,listStructNames[0]+"_GTProcessed.nii.gz"))
 
     if not(struct2Tosave is None):
         tumor_nii_2save = nib.Nifti1Image(struct2Tosave, np.eye(4))  
-        nib.save(tumor_nii_2save, os.path.join(savePath,tumorname+listStructNames[1]+"_GTProcessed.nii.gz"))
+        nib.save(tumor_nii_2save, os.path.join(savePath,listStructNames[1]+"_GTProcessed.nii.gz"))
 
     if not(struct3Tosave is None):
         tumor_nii_2save = nib.Nifti1Image(struct3Tosave, np.eye(4))  
-        nib.save(tumor_nii_2save, os.path.join(savePath,tumorname+listStructNames[2]+"_GTProcessed.nii.gz"))
+        nib.save(tumor_nii_2save, os.path.join(savePath,listStructNames[2]+"_GTProcessed.nii.gz"))
 
     return 0

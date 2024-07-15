@@ -38,7 +38,7 @@ def Nii2Sitk(nifti_image):
     del nifti_image
     return sitk_image
 
-def mainPreProc(currCTs,currCT_name,itvTot,itvTumor,itvNodes,savePath_Px,nametumor):
+def mainPreProc(currCTs,currCT_name,structTot,structTumor,structNodes,savePath_Px,nametumor):
     #CT
     ct_nii_ori = NiiLoadAndOrientation(currCTs[0])#orient to LAS    
     normCT = NormalizeImage(Nii2Sitk(ct_nii_ori),None,None,None,(1,1,1),None)
@@ -52,16 +52,16 @@ def mainPreProc(currCTs,currCT_name,itvTot,itvTumor,itvNodes,savePath_Px,nametum
     #Tumor
     listStructNames = []
     listStructImages = []
-    if len(itvTot)>0: 
-        itvTotResolution,tot_name = DataPreprocStruct(itvTot[0],ct_nii_ori,normCT_size)
+    if len(structTot)>0: 
+        itvTotResolution,tot_name = DataPreprocStruct(structTot[0],ct_nii_ori,normCT_size)
         listStructImages.append(itvTotResolution)
         listStructNames.append(tot_name)
-    if len(itvTumor)>0: 
-        itvTumorResolution,tumor_name = DataPreprocStruct(itvTumor[0],ct_nii_ori,normCT_size)
+    if len(structTumor)>0: 
+        itvTumorResolution,tumor_name = DataPreprocStruct(structTumor[0],ct_nii_ori,normCT_size)
         listStructImages.append(itvTumorResolution)
         listStructNames.append(tumor_name)
-    if len(itvNodes)>0: 
-        itvNodesResolution,nodes_name = DataPreprocStruct(itvNodes[0],ct_nii_ori,normCT_size)
+    if len(structNodes)>0: 
+        itvNodesResolution,nodes_name = DataPreprocStruct(structNodes[0],ct_nii_ori,normCT_size)
         listStructImages.append(itvNodesResolution)
         listStructNames.append(nodes_name)
 
@@ -70,5 +70,4 @@ def mainPreProc(currCTs,currCT_name,itvTot,itvTumor,itvNodes,savePath_Px,nametum
 
     ctcropped,struct1cropped,struct2cropped,struct3cropped = CropForegroundFunctionMONAI_v2(ctnpori_rot,normLustmask_rot,listStructImages,listStructNames)
     saveNiiwName(savePath_Px,currCT_name,ctcropped,struct1cropped,struct2cropped,struct3cropped,tumorname=nametumor,listStructNames=listStructNames)
-    ITVconv_flag = True
-    return ITVconv_flag
+    return True

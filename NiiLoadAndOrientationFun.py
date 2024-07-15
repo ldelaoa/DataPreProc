@@ -12,5 +12,5 @@ def NiiLoadAndOrientation(path2nii):
         ct00_data = ct00_nii.get_fdata()
         transformed_data = nib.orientations.apply_orientation(ct00_data, las_ornt)
         ct00_nii = nib.Nifti1Image(transformed_data, ct00_nii.affine, ct00_nii.header)
-        print("Reoriented")
+        #print("Reoriented")
     return ct00_nii

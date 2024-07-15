@@ -49,13 +49,11 @@ def main(root_path,savePath):
         GTVconv_flag = False
         if not(os.path.exists(savePath_Px)):
             os.mkdir(savePath_Px)
-        if True or len(os.listdir(savePath_Px))==0:
-            print("Empty Folder Px ",Px)
-            logger.info("Empty Folder Px "+str(Px))
+            logger.info("Curr  "+str(Px))
             acct_path, PET_path,planct_path,itvTot,itvTumor,itvNodes,gtvTot,gtvTumor,gtvNodes,bp0,bp10,bp20,bp30,bp40,bp50,bp60,bp70,bp80,bp90,bp100 = LookFilesNiiRaw(os.path.join(root_path, Px),logger)
 
             #Check if any delineation is available, else not convert
-            if len(gtvTot)+len(gtvTumor)+len(gtvNodes)+len(itvTot)+len(itvTumor)+len(itvNodes)==0:
+            if not((len(itvTot)>0 or len(itvTumor)>0 or len(itvNodes)>0) and (len(gtvTot)>0 or len(gtvTumor)>0 or len(gtvNodes)>0)):
                 print("ERROR Tumor Info Not existing")
                 logger.warning("ERROR Tumor Info Not existing"+str(Px))
             else:
@@ -66,12 +64,12 @@ def main(root_path,savePath):
                 numCT=0
                 for currCTs in listAllCTs_paths:
                     if len(currCTs)>0:
-                        if not(ITVconv_flag) and numCT==0 and (len(itvTot)>0 or len(itvTumor)>0 or len(itvNodes)>0):
+                        if not(ITVconv_flag) and numCT==0:
                             currCT_name = currCTs[0].split("\\")[-1].split(".")[-3]+"_"+listAllCTs_names[numCT]
                             print(currCT_name,numCT)
                             ITVconv_flag = mainPreProc(currCTs,currCT_name,itvTot,itvTumor,itvNodes,savePath_Px,'ITV')
 
-                        elif not(GTVconv_flag) and numCT>0 and (len(gtvTot)>0 or len(gtvTumor)>0 or len(gtvNodes)>0):
+                        elif not(GTVconv_flag) and numCT>0:
                             currCT_name = currCTs[0].split("\\")[-1].split(".")[-3]+"_"+listAllCTs_names[numCT]
                             print(currCT_name,numCT)
                             GTVconv_flag = mainPreProc(currCTs,currCT_name,gtvTot,gtvTumor,gtvNodes,savePath_Px,'GTV')
@@ -91,7 +89,7 @@ def main(root_path,savePath):
                             ctcropped,_,_ = CropForegroundFunctionMONAI(ctnpori_rot,normLustmask_rot,None,None)
                             nametumor = None
                             saveNiiwName(savePath_Px,currCT_name,ctcropped,None,None,tumorname=None)
-                    numCT+=1
+                numCT+=1
             print("----------------------")
 
 if __name__ == "__main__" :
