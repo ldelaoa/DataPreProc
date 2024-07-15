@@ -1,12 +1,12 @@
 import SimpleITK as sitk
 import numpy as np
 import nibabel as nib
-
+#from FixResolutionFun import *
 from DataPreProcTumor import DataPreprocStruct
 from NiiLoadAndOrientationFun import *
-from FixResolutionFun import *
 from DataPreProc import *
 from SaveFuns import saveNiiwName
+#from Screenshot_fun import Screenshot
 
 def DataPreProcLung(CT4Lung):
     currCT_LungMask = CreateNOSaveLungMask(CT4Lung,SavePath=None)
@@ -44,7 +44,7 @@ def mainPreProc(currCTs,currCT_name,itvTot,itvTumor,itvNodes,savePath_Px,nametum
     normCT = NormalizeImage(Nii2Sitk(ct_nii_ori),None,None,None,(1,1,1),None)
     ct_np_ori = Sitk2Nii(normCT).get_fdata()
     ctnpori_rot = np.rot90(ct_np_ori,axes=(0,1),k=-1)
-
+    normCT_size = ctnpori_rot.shape
     #Lung
     normLustmask_rot = DataPreProcLung(normCT)
     del normCT
@@ -53,15 +53,15 @@ def mainPreProc(currCTs,currCT_name,itvTot,itvTumor,itvNodes,savePath_Px,nametum
     listStructNames = []
     listStructImages = []
     if len(itvTot)>0: 
-        itvTotResolution,tot_name = DataPreprocStruct(itvTot[0],ct_nii_ori)
+        itvTotResolution,tot_name = DataPreprocStruct(itvTot[0],ct_nii_ori,normCT_size)
         listStructImages.append(itvTotResolution)
         listStructNames.append(tot_name)
     if len(itvTumor)>0: 
-        itvTumorResolution,tumor_name = DataPreprocStruct(itvTumor[0],ct_nii_ori)
+        itvTumorResolution,tumor_name = DataPreprocStruct(itvTumor[0],ct_nii_ori,normCT_size)
         listStructImages.append(itvTumorResolution)
         listStructNames.append(tumor_name)
     if len(itvNodes)>0: 
-        itvNodesResolution,nodes_name = DataPreprocStruct(itvNodes[0],ct_nii_ori)
+        itvNodesResolution,nodes_name = DataPreprocStruct(itvNodes[0],ct_nii_ori,normCT_size)
         listStructImages.append(itvNodesResolution)
         listStructNames.append(nodes_name)
 
@@ -70,6 +70,5 @@ def mainPreProc(currCTs,currCT_name,itvTot,itvTumor,itvNodes,savePath_Px,nametum
 
     ctcropped,struct1cropped,struct2cropped,struct3cropped = CropForegroundFunctionMONAI_v2(ctnpori_rot,normLustmask_rot,listStructImages,listStructNames)
     saveNiiwName(savePath_Px,currCT_name,ctcropped,struct1cropped,struct2cropped,struct3cropped,tumorname=nametumor,listStructNames=listStructNames)
-    del ctcropped,itvTumorcropped,itvNodesCropped,itvTumorResolution,itvNodesResolution,normLustmask_rot,ctnpori_rot,ct_nii_ori
     ITVconv_flag = True
     return ITVconv_flag

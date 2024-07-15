@@ -9,19 +9,20 @@ def NormalizeImage(image,intFlag=None,saveFilename=None,originReference=None,des
     
     resampler = sitk.ResampleImageFilter()
 
-    if desired_spacing is not None:
+
+    if desired_Size is not None:
+        spacing_ratio = [sz1/sz2 for sz1, sz2 in zip(image.GetSize(), desired_Size)]
+        new_spacing = [sz * ratio for sz, ratio in zip(image.GetSpacing(), spacing_ratio)]
+        resampler.SetSize(desired_Size)
+        resampler.SetOutputSpacing(new_spacing)
+        print("Changing Size",desired_Size)
+    elif desired_spacing is not None:
         current_spacing = image.GetSpacing()
         resampling_factor = [current_spacing[i] / desired_spacing[i] for i in range(image.GetDimension())]
         new_size = [int(image.GetSize()[i] * resampling_factor[i]) for i in range(image.GetDimension())]    
         resampler.SetSize(new_size)
         resampler.SetOutputSpacing(desired_spacing)
         print("Change Spacing",desired_spacing)
-    elif desired_Size is not None:
-        spacing_ratio = [sz1/sz2 for sz1, sz2 in zip(image.GetSize(), new_size)]
-        new_spacing = [sz * ratio for sz, ratio in zip(image.GetSpacing(), spacing_ratio)]
-        resampler.SetSize(desired_Size)
-        resampler.SetOutputSpacing(new_spacing)
-        print("Changing Size",desired_Size)
     else:
         resampler.SetSize(image.GetSize())
         resampler.SetOutputSpacing(image.GetSpacing())

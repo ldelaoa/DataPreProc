@@ -1,7 +1,7 @@
-from nilearn.image import resample_img
+#from nilearn.image import resample_img
+#from FixResolutionFun import *
 import nibabel as nib
 from NiiLoadAndOrientationFun import *
-from FixResolutionFun import *
 import numpy as np
 from NormalizeImage import *
 from MergePandN_Fun import GetNames
@@ -27,11 +27,11 @@ def Nii2Sitk(nifti_image):
     del nifti_image
     return sitk_image
 
-def DataPreprocStruct(structPath,ctReference):
+def DataPreprocStruct(structPath,ctReference,CT_Shape):
     struct_name = structPath.split('\\')[-1].split('.')[0]
     
     gtvTumor_nii_ori = NiiLoadAndOrientation(structPath)#orient to LAS
-    gtvTumor_itk_norm = NormalizeImage(Nii2Sitk(gtvTumor_nii_ori),None,None,Nii2Sitk(ctReference).GetOrigin(),(1,1,1),ctReference.shape)
+    gtvTumor_itk_norm = NormalizeImage(Nii2Sitk(gtvTumor_nii_ori),None,None,Nii2Sitk(ctReference).GetOrigin(),(1,1,1),CT_Shape)
     gtvTumor_nii_norm = Sitk2Nii(gtvTumor_itk_norm)
     del gtvTumor_itk_norm
     del gtvTumor_nii_ori
