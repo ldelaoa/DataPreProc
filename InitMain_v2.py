@@ -40,46 +40,60 @@ def main(root_path,savePath):
     logger.addHandler(handler)
     
     print("Total of PX:",len(PxList))
-
+    converting=0
+    NOTconverting=0
     for Px in PxList:
         savePath_Px = os.path.join(savePath,Px)        
-        if False:
+        if False and os.path.exists(savePath_Px):
             delete_files_in_directory(savePath_Px)
         ITVconv_flag = False
         GTVconv_flag = False
-        if not(os.path.exists(savePath_Px)):
-            print("Px:",Px)
-            logger.info("Curr  "+str(Px))
+        if True or not(os.path.exists(savePath_Px)):
+            #print("Px:",Px)
+            #logger.info("Curr  "+str(Px))
             acct_path, PET_path,planct_path,itvTot,itvTumor,itvNodes,gtvTot,gtvTumor,gtvNodes,bp0,bp10,bp20,bp30,bp40,bp50,bp60,bp70,bp80,bp90,bp100 = LookFilesNiiRaw(os.path.join(root_path, Px),logger)
+            if len(planct_path)>0:
+                if "thorax25mm" in planct_path[0]:
+                    converting+=1
+                else:
+                    NOTconverting+=1
+            if False:
+                #Check if any delineation is available, else not convert
+                if not((len(itvTot)>0 or len(itvTumor)>0 or len(itvNodes)>0) and (len(gtvTot)>0 or len(gtvTumor)>0 or len(gtvNodes)>0)):
+                    print("ERROR Tumor Info Not existing")
+                    logger.warning("ERROR Tumor Info Not existing"+str(Px))
+                elif len(planct_path)==0 or len(bp50)+len(bp60)+len(bp40)==0:
+                    print("CTs are insufficient")
+                    logger.warning("CTs are insufficient"+str(Px))
+                else:
+                    listAllCTs_names = ["PlanCT","bp50","bp60","bp40",]
+                    listAllCTs_paths = [planct_path,bp50,bp60,bp40]
 
-            #Check if any delineation is available, else not convert
-            if not((len(itvTot)>0 or len(itvTumor)>0 or len(itvNodes)>0) and (len(gtvTot)>0 or len(gtvTumor)>0 or len(gtvNodes)>0)):
-                print("ERROR Tumor Info Not existing")
-                logger.warning("ERROR Tumor Info Not existing"+str(Px))
-            elif len(planct_path)==0 or len(bp50)+len(bp60)+len(bp40)==0:
-                print("CTs are insufficient")
-                logger.warning("CTs are insufficient"+str(Px))
-            else:
-                listAllCTs_names = ["PlanCT","bp50","bp60","bp40",]
-                listAllCTs_paths = [planct_path,bp50,bp60,bp40]
+                    numCT=0
+                    print("Num CTs",len(planct_path)+len(bp50)+len(bp60)+len(bp40))
+                    if not(os.path.exists(savePath_Px)):
+                        os.mkdir(savePath_Px)
 
-                numCT=0
-                print("Num CTs",len(planct_path)+len(bp50)+len(bp60)+len(bp40))
+                    #ITV
+                    planCT_name = planct_path[0].split("\\")[-1].split(".")[-3]+"_"+"PlanCT"
+                    print(planCT_name,numCT)
+                    ITVconv_flag = mainPreProc(currCTs,planCT_name,itvTot,itvTumor,itvNodes,savePath_Px,'ITV')
 
-                os.mkdir(savePath_Px)
-                for currCTs in listAllCTs_paths:
-                    if len(currCTs)>0:
-                        if not(ITVconv_flag) and numCT==0:
-                            currCT_name = currCTs[0].split("\\")[-1].split(".")[-3]+"_"+listAllCTs_names[numCT]
-                            print(currCT_name,numCT)
-                            ITVconv_flag = mainPreProc(currCTs,currCT_name,itvTot,itvTumor,itvNodes,savePath_Px,'ITV')
+                    
+                    for currCTs in listAllCTs_paths:
+                        if len(currCTs)>0:
+                            if not(ITVconv_flag) and numCT==0:
+                                currCT_name = currCTs[0].split("\\")[-1].split(".")[-3]+"_"+listAllCTs_names[numCT]
+                                print(currCT_name,numCT)
+                                ITVconv_flag = mainPreProc(currCTs,currCT_name,itvTot,itvTumor,itvNodes,savePath_Px,'ITV')
 
-                        elif not(GTVconv_flag) and numCT>0:
-                            currCT_name = currCTs[0].split("\\")[-1].split(".")[-3]+"_"+listAllCTs_names[numCT]
-                            print(currCT_name,numCT)
-                            GTVconv_flag = mainPreProc(currCTs,currCT_name,gtvTot,gtvTumor,gtvNodes,savePath_Px,'GTV')
-                    numCT+=1
-            print("----------------------")
+                            elif not(GTVconv_flag) and numCT>0:
+                                currCT_name = currCTs[0].split("\\")[-1].split(".")[-3]+"_"+listAllCTs_names[numCT]
+                                print(currCT_name,numCT)
+                                GTVconv_flag = mainPreProc(currCTs,currCT_name,gtvTot,gtvTumor,gtvNodes,savePath_Px,'GTV')
+                        numCT+=1
+            #print("----------------------")
+    print("Conv",converting,"Not Conv",NOTconverting)
 
 if __name__ == "__main__" :
     #rootPath = "//zkh/appdata/RTDicom/Projectline_modelling_lung_cancer/Users/Luis/CT_ITV_GTV_XBP_Nii/"
