@@ -65,7 +65,7 @@ def main(PxList):
                 numCT=0
                 for currCTs in listAllCTs_paths:
                     if len(currCTs)>0:
-                        if not(GTVconv_flag) and numCT>0:
+                        if not(GTVconv_flag):
                             currCT_name = currCTs[0].split("\\")[-1].split(".")[-3]+"_"+listAllCTs_names[numCT]
                             print(currCT_name,numCT)
                             GTVconv_flag = mainPreProc(currCTs,currCT_name,gtvTot,gtvTumor,gtvNodes,savePath_Px,'GTV')

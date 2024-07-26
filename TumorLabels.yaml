@@ -1,18 +1,9 @@
 #ITV Labels
 itv_tot_labels : ["ITV.nii", "IGTV.nii", "IgTV.nii", "ITV1", "ITV2", "ITV3", "ITV totaal def", "2ITV", "ITV_TOT", "ITV_6000", "ITV_5100", "ITV_Totaal", "ITV_LBK", "ITV_LOK", "IGTV_6000"]
-itv_tumor_labels_withOUTCreated : ["ITVtumor", "ITV_tumor", "ITVtumor def", "2ITV_tumor", "ITV-P", "ITVtumorA1", "ITV_tumor_LBK", "ITVtu", "IGTVp"]
-itv_ln_labels_withOUTCreated : ["ITVklieren", "ITV_klier", "ITV_Klier", "ITVklieren def", "2ITV_klier", "ITV_n", "ITV_klier_LBK", "IGTVnode"]
+itv_tumor_labels_withOUTCreated : ["IGTVp","ITVp","ITVtumor", "ITV_tumor", "ITVtumor def", "2ITV_tumor", "ITV-P", "ITVtumorA1", "ITV_tumor_LBK", "ITVtu", "IGTVp"]
+itv_ln_labels_withOUTCreated : ["IGTVn","ITVn","ITVklieren", "ITV_klier", "ITV_Klier", "ITVklieren def", "2ITV_klier", "ITV_n", "ITV_klier_LBK", "IGTVnode"]
 
 #GTV Labels
 gtv_tot_labels : ["GTV.nii", "GTV1", "GTV2", "GTV3", "GTV totaal def", "2GTV", "GTV_TOT", "GTV_6000", "GTV_5100", "GTV_Totaal", "GTV_LBK", "GTV_5000", "GTV_totaal", "GTVtotaal", "GTVnew", "GTV(op exp)", "GTVop"]
-gtv_tumor_labels_withOUTCreated : ["GTVtumor", "GTV_tumor", "GTVtumor def", "2GTV_tumor", "GTV-P", "GTVtumorA1", "GTV_tumor_LBK", "GTV tumor", "GTVp", "GTVtu", "GTVtumor_exp", "GTVtumor_exp_50->0","GTVt"]
-gtv_ln_labels_withOUTCreated : ["GTVklieren", "GTV_klier", "GTV_Klier", "GTVklieren def", "2GTV_klier", "GTV_n", "GTV_klier_LBK", "GTVn", "GTVnode_exp", "GTVnodes_exp", "GTVnodes_exp_50->0", "GTVklieren"]
-
-
-#ITV Labels
-itv_tumor_labels_withCreated : ["ITVtumor", "ITV_tumor", "ITVtumor def", "2ITV_tumor", "ITV-P", "ITVtumorA1", "ITV_tumor_LBK", "ITVtu", "IGTVp","ITVp_created"]
-itv_ln_labels_withCreated : ["ITVklieren", "ITV_klier", "ITV_Klier", "ITVklieren def", "2ITV_klier", "ITV_n", "ITV_klier_LBK", "IGTVnode","ITVn_created"]
-
-#GTV Labels
-gtv_tumor_labels_withCreated : ["GTVtumor", "GTV_tumor", "GTVtumor def", "2GTV_tumor", "GTV-P", "GTVtumorA1", "GTV_tumor_LBK", "GTV tumor", "GTVp", "GTVtu", "GTVtumor_exp", "GTVtumor_exp_50->0","GTVt","GTVp_created"]
-gtv_ln_labels_withCreated : ["GTVklieren", "GTV_klier", "GTV_Klier", "GTVklieren def", "2GTV_klier", "GTV_n", "GTV_klier_LBK", "GTVn", "GTVnode_exp", "GTVnodes_exp", "GTVnodes_exp_50->0", "GTVklieren","GTVn_created"]
+gtv_tumor_labels_withOUTCreated : ["GTVp","GTVtumor", "GTV_tumor", "GTVtumor def", "2GTV_tumor", "GTV-P", "GTVtumorA1", "GTV_tumor_LBK", "GTV tumor", "GTVp", "GTVtu", "GTVtumor_exp", "GTVtumor_exp_50->0","GTVt"]
+gtv_ln_labels_withOUTCreated : ["GTVn","GTVklieren", "GTV_klier", "GTV_Klier", "GTVklieren def", "2GTV_klier", "GTV_n", "GTV_klier_LBK", "GTVn", "GTVnode_exp", "GTVnodes_exp", "GTVnodes_exp_50->0", "GTVklieren"]
