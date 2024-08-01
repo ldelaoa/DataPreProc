@@ -1,7 +1,7 @@
 import SimpleITK as sitk
 import numpy as np
 import os
-from monai.transforms import CropForegroundd,Compose
+from monai.transforms import CropForegroundd,Compose,CenterSpatialCropd
 
 
 def RegionXtra(min_indices,max_indices,image,array):
@@ -35,7 +35,7 @@ def CropWithRegion(region,array,sitkImage):
 
     return cropped_img
 
-def CropForegroundFunctionMONAI_v2(ctImage,lungImage,structImage_list=[],structName_list=[]):
+def CropForegroundFunctionMONAI_v2(ctImage,lungImage,structImage_list=[],structName_list=[],MinStruct_Size=[320,320,320]):
     ctImage = np.expand_dims(ctImage,axis=0)
     lungImage = np.expand_dims(lungImage,axis=0)
     #Expand Dims    
@@ -47,26 +47,33 @@ def CropForegroundFunctionMONAI_v2(ctImage,lungImage,structImage_list=[],structN
     elif len(structImage_list)==1:
         structImage = np.expand_dims(structImage_list[0],axis=0)
         data_dict = {'CT': ctImage, 'Lung': lungImage, structName_list[0]:structImage}
-        transform = Compose([CropForegroundd(keys=["CT",structName_list[0]], source_key='Lung',k_divisible=[320,320,320],margin=0,allow_smaller=False)])
+        transform = Compose([
+            CenterSpatialCropd(keys=["CT",structName_list[0]],roi_size=MinStruct_Size),
+            CropForegroundd(keys=["CT",structName_list[0]], source_key='Lung',k_divisible=[320,320,320],margin=0,allow_smaller=False)])
 
     elif len(structImage_list)==2:
         structImage = np.expand_dims(structImage_list[0],axis=0)
         structImage2 = np.expand_dims(structImage_list[1],axis=0)
         data_dict = {'CT': ctImage, 'Lung': lungImage, structName_list[0]:structImage,structName_list[1]:structImage2}
-        transform = Compose([CropForegroundd(keys=["CT",structName_list[0],structName_list[1]], source_key='Lung',k_divisible=[320,320,320],margin=0,allow_smaller=False)])
+        transform = Compose([
+            CenterSpatialCropd(keys=["CT",structName_list[0],structName_list[1]],roi_size=MinStruct_Size),
+            CropForegroundd(keys=["CT",structName_list[0],structName_list[1]], source_key='Lung',k_divisible=[320,320,320],margin=0,allow_smaller=False)])
 
     elif len(structImage_list)==3:
         structImage = np.expand_dims(structImage_list[0],axis=0)
         structImage2 = np.expand_dims(structImage_list[1],axis=0)
         structImage3 = np.expand_dims(structImage_list[2],axis=0)
-        print(structImage.shape,structImage2.shape,structImage3.shape,ctImage.shape)
+        #print(structImage.shape,structImage2.shape,structImage3.shape,ctImage.shape)
         data_dict = {'CT': ctImage, 'Lung': lungImage, structName_list[0]:structImage,structName_list[1]:structImage2,structName_list[2]:structImage3}
-        transform = Compose([CropForegroundd(keys=["CT",structName_list[0],structName_list[1],structName_list[2]], source_key='Lung',k_divisible=[320,320,320],margin=0,allow_smaller=False)])
+        transform = Compose([
+            CenterSpatialCropd(keys=["CT",structName_list[0],structName_list[1],structName_list[2]],roi_size=MinStruct_Size),
+            CropForegroundd(keys=["CT",structName_list[0],structName_list[1],structName_list[2]], 
+                            source_key='Lung',k_divisible=[320,320,320],margin=0,allow_smaller=False)])
     
     data = transform(data_dict)
     ctnp = data['CT'][0].numpy()
     
-    print("Pre",ctImage[0].shape,"Post Crop Shape",ctnp.shape)
+    #print("Pre",ctImage[0].shape,"Post Crop Shape",ctnp.shape)
     if len(structImage_list)==0:
         return ctnp.astype(np.float64),None,None,None
     
@@ -121,9 +128,30 @@ def CropForegroundFunctionMONAI(ctImage,lungImage,tumorImage1=None,nodesImage1=N
 
 
 
+def CropImgToLungMask_v2(LungMask,AddImg):
+    lung_array = sitk.GetArrayFromImage(LungMask)
+    addImg_array = sitk.GetArrayFromImage(AddImg)
+
+    # Find the bounding box containing values greater than 0
+    nonzero_indices = np.nonzero(lung_array)
+    min_indices = np.min(nonzero_indices, axis=1)
+    max_indices = np.max(nonzero_indices, axis=1)
+
+    #Add Extra Margin to the Crop
+    min_indices_xtra,max_indices_xtra = RegionXtra(min_indices, max_indices, CT, lung_array)
+
+    # Define the cropping region
+    #region = [int(min_index) for min_index in min_indices], [int(max_index) + 1 for max_index in max_indices]
+    region = [int(min_index) for min_index in min_indices_xtra], [int(max_index) + 1 for max_index in max_indices_xtra]
+    cropped_CT = CropWithRegion(region, CT_array, CT)
+    cropped_LM = CropWithRegion(region, lung_array, LungMask)
+    cropped_AddImg = CropWithRegion(region, addImg_array, AddImg)
+
+    return cropped_CT,cropped_LM,cropped_AddImg
 
 
-def CropImgToLungMask(LungMask,CT,AddImg,rootPx_path,name):
+
+def CropImgToLungMask_old(LungMask,CT,AddImg,rootPx_path,name):
     lung_array = sitk.GetArrayFromImage(LungMask)
     CT_array = sitk.GetArrayFromImage(CT)
     addImg_array = sitk.GetArrayFromImage(AddImg)

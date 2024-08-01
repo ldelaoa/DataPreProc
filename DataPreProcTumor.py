@@ -27,11 +27,11 @@ def Nii2Sitk(nifti_image):
     del nifti_image
     return sitk_image
 
-def DataPreprocStruct(structPath,ctReference,CT_Shape):
+def DataPreprocStruct(structPath,ctReference):
     struct_name = structPath.split('\\')[-1].split('.')[0]
     
     gtvTumor_nii_ori = NiiLoadAndOrientation(structPath)#orient to LAS
-    gtvTumor_itk_norm = NormalizeImage(Nii2Sitk(gtvTumor_nii_ori),None,None,Nii2Sitk(ctReference).GetOrigin(),(1,1,1),CT_Shape)
+    gtvTumor_itk_norm = NormalizeImage(Nii2Sitk(gtvTumor_nii_ori),None,None,Nii2Sitk(ctReference).GetOrigin(),(1,1,1),None)
     gtvTumor_nii_norm = Sitk2Nii(gtvTumor_itk_norm)
     del gtvTumor_itk_norm
     del gtvTumor_nii_ori

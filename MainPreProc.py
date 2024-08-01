@@ -44,7 +44,7 @@ def mainPreProc(currCTs,currCT_name,structTot,structTumor,structNodes,savePath_P
     normCT = NormalizeImage(Nii2Sitk(ct_nii_ori),None,None,None,(1,1,1),None)
     ct_np_ori = Sitk2Nii(normCT).get_fdata()
     ctnpori_rot = np.rot90(ct_np_ori,axes=(0,1),k=-1)
-    normCT_size = ctnpori_rot.shape
+    
     #Lung
     normLustmask_rot = DataPreProcLung(normCT)
     del normCT
@@ -52,22 +52,34 @@ def mainPreProc(currCTs,currCT_name,structTot,structTumor,structNodes,savePath_P
     #Tumor
     listStructNames = []
     listStructImages = []
+    minShape = ctnpori_rot.shape
     if len(structTot)>0: 
-        itvTotResolution,tot_name = DataPreprocStruct(structTot[0],ct_nii_ori,normCT_size)
+        itvTotResolution,tot_name = DataPreprocStruct(structTot[0],ct_nii_ori)
         listStructImages.append(itvTotResolution)
         listStructNames.append(tot_name)
+        if itvTotResolution.shape[0]<minShape[0]: minShape[0]=itvTotResolution.shape[0]
+        if itvTotResolution.shape[1]<minShape[1]: minShape[1]=itvTotResolution.shape[1]
+        if itvTotResolution.shape[2]<minShape[2]: minShape[2]=itvTotResolution.shape[2]
     if len(structTumor)>0: 
-        itvTumorResolution,tumor_name = DataPreprocStruct(structTumor[0],ct_nii_ori,normCT_size)
+        itvTumorResolution,tumor_name = DataPreprocStruct(structTumor[0],ct_nii_ori)
         listStructImages.append(itvTumorResolution)
         listStructNames.append(tumor_name)
+        if itvTumorResolution.shape[0]<minShape[0]: minShape[0]=itvTumorResolution.shape[0]
+        if itvTumorResolution.shape[1]<minShape[1]: minShape[1]=itvTumorResolution.shape[1]
+        if itvTumorResolution.shape[2]<minShape[2]: minShape[2]=itvTumorResolution.shape[2]
     if len(structNodes)>0: 
-        itvNodesResolution,nodes_name = DataPreprocStruct(structNodes[0],ct_nii_ori,normCT_size)
+        itvNodesResolution,nodes_name = DataPreprocStruct(structNodes[0],ct_nii_ori)
         listStructImages.append(itvNodesResolution)
         listStructNames.append(nodes_name)
+        if itvNodesResolution.shape[0]<minShape[0]: minShape[0]=itvNodesResolution.shape[0]
+        if itvNodesResolution.shape[1]<minShape[1]: minShape[1]=itvNodesResolution.shape[1]
+        if itvNodesResolution.shape[2]<minShape[2]: minShape[2]=itvNodesResolution.shape[2]
 
     #itvTumorFilled = FixHoles(itvTumorResolution)
     #itvNodesFilled = FixHoles(itvNodesResolution)
-
-    ctcropped,struct1cropped,struct2cropped,struct3cropped = CropForegroundFunctionMONAI_v2(ctnpori_rot,normLustmask_rot,listStructImages,listStructNames)
+    
+    ctcropped,struct1cropped,struct2cropped,struct3cropped = CropForegroundFunctionMONAI_v2(
+        ctnpori_rot,normLustmask_rot,listStructImages,listStructNames,MinStruct_Size=minShape)
+    
     saveNiiwName(savePath_Px,currCT_name,ctcropped,struct1cropped,struct2cropped,struct3cropped,tumorname=nametumor,listStructNames=listStructNames)
     return True
