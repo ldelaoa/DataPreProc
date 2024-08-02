@@ -43,15 +43,8 @@ def LookFilesNiiRaw(folder,logger):
 
     itvtot_labels,itvtum_labels,itvnod_labels,gtvtot_labels,gtvtum_labels,gtvnod_labels = ReadTumorLabels()
     bp_Tags = BPLabels()
-    totalFiles = []
     for root,dirs,files in os.walk(folder):
         for f in files:
-            totalFiles.append(f)
-            if "PET" in f and "resampled" not in f and "cropped" not in f and "registered" not in f.lower():
-                PET_path.append(os.path.join(root, f))
-            if "AC_CT_Body" in f or "CT van PET" in f or "CT LD" in f or "AC CT" in f or "AC  CT" in f and "registered" not in f.lower():
-                acct_path.append(os.path.join(root, f))
-            
             
             #if "trigger_delay" not in f.lower() and("thorax" in f.lower() or "ave" in f.lower() or "mip" in f.lower()): planct_path.append(os.path.join(root,f))
             if not("_ex" in f.lower() or "_in" in f.lower() or "trigger_delay_" in f.lower()) and ("25mm" in f.lower() or "3mm" in f.lower() or "2mm" in f.lower() or "ave" in f.lower() or "mip" in f.lower()): 
@@ -76,22 +69,6 @@ def LookFilesNiiRaw(folder,logger):
             if any(bpTags_tt in f.lower() for bpTags_tt in bp_Tags['80%']): bp80.append(os.path.join(root, f))
             if any(bpTags_tt in f.lower() for bpTags_tt in bp_Tags['90%']): bp90.append(os.path.join(root, f))
             if any(bpTags_tt in f.lower() for bpTags_tt in bp_Tags['100%']): bp100.append(os.path.join(root, f))
-    if False:
-        print("ACCT",len(acct_path),"PET",len(PET_path))
-        print("PlanCT",len(planct_path))
-        print("ITVtot",len(itvTot),"ITVtum",len(itvTumor),"ITVnod",len(itvNodes))
-        print("GTVtot",len(gtvTot),"GTVtum",len(gtvTumor),"GTVnod",len(gtvNodes))
-        print("BP0",len(bp0),"bp10",len(bp10),"bp20",len(bp20),"bp30",len(bp30),"bp40",len(bp40))
-        print("BP50",len(bp50),"bp60",len(bp60),"bp70",len(bp70),"bp80",len(bp80),"bp90",len(bp90),"bp100",len(bp100))
-        print("Total Files in Px Folder",len(totalFiles))
-    if False:
-        logger.info("ACCT"+str(len(acct_path))+"PET"+str(len(PET_path)))
-        logger.info("PlanCT"+str(len(planct_path)))
-        logger.info("ITVtot"+str(len(itvTot))+"ITVtum"+str(len(itvTumor))+"ITVnod"+str(len(itvNodes)))
-        logger.info("GTVtot"+str(len(gtvTot))+"GTVtum"+str(len(gtvTumor))+"GTVnod"+str(len(gtvNodes)))
-        logger.info("BP0"+str(len(bp0))+"bp10"+str(len(bp10))+"bp20"+str(len(bp20))+"bp30"+str(len(bp30))+"bp40"+str(len(bp40)))
-        logger.info("BP50"+str(len(bp50))+"bp60"+str(len(bp60))+"bp70"+str(len(bp70))+"bp80"+str(len(bp80))+"bp90"+str(len(bp90))+"bp100"+str(len(bp100)))
-        logger.info("Total Files in Px Folder"+str(len(totalFiles)))
 
     return acct_path, PET_path,planct_path,itvTot,itvTumor,itvNodes,gtvTot,gtvTumor,gtvNodes,bp0,bp10,bp20,bp30,bp40,bp50,bp60,bp70,bp80,bp90,bp100
 
