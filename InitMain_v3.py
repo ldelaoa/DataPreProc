@@ -79,7 +79,8 @@ def main(PxList):
 
 
 def init(root_path,savePath):
-    PxList = CreatePxList()
+    PxList = os.listdir("Z:/inbox/Nii_Data/CT_ITV_GTV_XBP_Nii/")
+    #PxList = CreatePxList()
     if False:
         logger = logging.getLogger('Nii2Nii_Log_V8')
         logger.setLevel(logging.DEBUG)

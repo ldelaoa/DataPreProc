@@ -52,7 +52,11 @@ def mainPreProc(currCTs,currCT_name,structTot,structTumor,structNodes,savePath_P
     #Tumor
     listStructNames = []
     listStructImages = []
-    minShape = ctnpori_rot.shape
+    minShape = [0,0,0]
+    minShape[0] = ctnpori_rot.shape[0]
+    minShape[1] = ctnpori_rot.shape[1]
+    minShape[2] = ctnpori_rot.shape[0]
+    print(minShape)
     if len(structTot)>0: 
         itvTotResolution,tot_name = DataPreprocStruct(structTot[0],ct_nii_ori)
         listStructImages.append(itvTotResolution)

@@ -54,7 +54,7 @@ def LookFilesNiiRaw(folder,logger):
             
             
             #if "trigger_delay" not in f.lower() and("thorax" in f.lower() or "ave" in f.lower() or "mip" in f.lower()): planct_path.append(os.path.join(root,f))
-            if not("_ex" in f.lower() or "_in" in f.lower() or "trigger_delay_" in f.lower()) and ("thorax" in f.lower() or "ave" in f.lower() or "mip" in f.lower()): 
+            if not("_ex" in f.lower() or "_in" in f.lower() or "trigger_delay_" in f.lower()) and ("25mm" in f.lower() or "3mm" in f.lower() or "2mm" in f.lower() or "ave" in f.lower() or "mip" in f.lower()): 
                 planct_path.append(os.path.join(root,f))
 
             if any(label_tt.lower() in f.lower() for label_tt in itvtot_labels): itvTot.append(os.path.join(root,f))
